@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { Category } from "@/types/category";
 import type { Speaker } from "@/types/speaker";
 import type { BayanWithRelations } from "@/types/bayan";
-import { CategoryIcon, CloseIcon, CompassIcon, PlayIcon, SearchIcon, ShuffleIcon } from "@/components/ui/Icon";
+import { CategoryIcon, CloseIcon, CompassIcon, MenuIcon, PlayIcon, SearchIcon, ShuffleIcon } from "@/components/ui/Icon";
 import { formatClock, cn } from "@/lib/utils";
 
 type ModalTab = "categories" | "speakers" | "explore";
@@ -87,33 +87,22 @@ export function TopicPickerModal({
 
   return (
     <>
-      {/* Bottom Trigger Controls (Aligned flush with Player Card) */}
-      <div className="flex w-[88dvw] max-w-[340px] items-center gap-2">
-        <button
-          type="button"
-          onClick={() => setIsOpen(true)}
-          className="group flex flex-1 min-w-0 items-center justify-between gap-2 rounded-full bg-black/80 pl-4 pr-2 py-2 text-xs font-extrabold text-white backdrop-blur-xl border border-white/20 shadow-[0_8px_25px_rgba(0,0,0,0.6)] hover:bg-black transition-all active:scale-95"
-        >
-          <span className="truncate">Pick your category</span>
-          {activeCategory && (
-            <span className="shrink-0 rounded-full bg-emerald-500/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-300 border border-emerald-500/30">
-              {activeCategory.name}
-            </span>
-          )}
-        </button>
-
-        {onShuffle && (
-          <button
-            type="button"
-            onClick={onShuffle}
-            title="Random Category / Shuffle"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black/80 text-white backdrop-blur-xl border border-white/20 shadow-[0_8px_25px_rgba(0,0,0,0.6)] hover:bg-black transition-all active:scale-95"
-            aria-label="Shuffle Category"
-          >
-            <ShuffleIcon className="text-sm" />
-          </button>
-        )}
-      </div>
+      {/* Top Right Header Menu SVG Icon Trigger Button */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        className="pointer-events-auto shrink-0 transition-transform active:scale-95 cursor-pointer hover:opacity-90"
+        aria-label="Open Categories Menu"
+        title="Pick your category"
+      >
+        <Image
+          src="/Menu.svg"
+          alt="Pick your category"
+          width={44}
+          height={44}
+          className="h-10 w-10 sm:h-11 sm:w-11 object-contain"
+        />
+      </button>
 
       {/* Mac Control Center Style Right Side Panel */}
       <AnimatePresence>
@@ -125,7 +114,7 @@ export function TopicPickerModal({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
+              className="pointer-events-auto fixed inset-0 z-50 bg-black/70 backdrop-blur-sm cursor-pointer"
             />
 
             {/* Right Slide-Over Panel */}
@@ -134,7 +123,7 @@ export function TopicPickerModal({
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 300 }}
-              className="fixed inset-y-0 right-0 z-50 flex h-full w-[88vw] max-w-md flex-col bg-[#0c1015]/95 border-l border-white/15 p-4 md:p-6 shadow-2xl backdrop-blur-2xl"
+              className="pointer-events-auto fixed inset-y-0 right-0 z-50 flex h-full w-[88vw] max-w-md flex-col bg-[#0c1015]/95 border-l border-white/15 p-4 md:p-6 shadow-2xl backdrop-blur-2xl"
             >
               {/* Header Bar */}
               <div className="flex items-center justify-between pb-3 border-b border-white/10">
@@ -149,11 +138,14 @@ export function TopicPickerModal({
 
                 <button
                   type="button"
-                  onClick={() => setIsOpen(false)}
-                  className="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-sand-200 hover:bg-white/20 hover:text-white transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsOpen(false);
+                  }}
+                  className="pointer-events-auto grid h-10 w-10 place-items-center rounded-full bg-white/10 text-sand-200 hover:bg-white/20 hover:text-white transition-colors cursor-pointer active:scale-90"
                   aria-label="Close"
                 >
-                  <CloseIcon className="text-base" />
+                  <CloseIcon className="text-lg" />
                 </button>
               </div>
 

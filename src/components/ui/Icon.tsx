@@ -114,6 +114,11 @@ export const CloseIcon = (p: IconProps) => (
     <path d="M6 6l12 12M18 6 6 18" />
   </Base>
 );
+export const MenuIcon = (p: IconProps) => (
+  <Base {...p}>
+    <path d="M4 6h16M4 12h16M4 18h16" />
+  </Base>
+);
 export const ChevronDownIcon = (p: IconProps) => (
   <Base {...p}>
     <path d="m6 9 6 6 6-6" />
@@ -133,6 +138,28 @@ export const YouTubeIcon = (p: IconProps) => (
 export const ShuffleIcon = (p: IconProps) => (
   <Base {...p}>
     <path d="M3 7h4l10 10h4M3 17h4l3-3M14 7h3M18 4l3 3-3 3M18 14l3 3-3 3" />
+  </Base>
+);
+export const RepeatIcon = (p: IconProps) => (
+  <Base {...p}>
+    <path d="m17 2 4 4-4 4" />
+    <path d="M3 11v-1a4 4 0 0 1 4-4h14M7 22l-4-4 4-4" />
+    <path d="M21 13v1a4 4 0 0 1-4 4H3" />
+  </Base>
+);
+export const EqualizerIcon = (p: IconProps) => (
+  <Base {...p}>
+    <path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6" />
+  </Base>
+);
+export const HeartIcon = (p: IconProps) => (
+  <Base {...p}>
+    <path d="M12 20s-7-4.6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.4-7 10-7 10Z" fill="currentColor" stroke="none" />
+  </Base>
+);
+export const PlaylistAddIcon = (p: IconProps) => (
+  <Base {...p}>
+    <path d="M4 6h11M4 12h11M4 18h6M16 16h6M19 13v6" />
   </Base>
 );
 export const QueueIcon = (p: IconProps) => (

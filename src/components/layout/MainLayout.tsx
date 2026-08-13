@@ -12,7 +12,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
 
   if (isHome) {
     return (
-      <div className="relative h-dvh w-dvw overflow-hidden font-sans select-none">
+      <div className="fixed inset-0 overflow-hidden font-sans select-none bg-slate-950 z-0">
         {/* Full-screen homepage content */}
         {children}
       </div>

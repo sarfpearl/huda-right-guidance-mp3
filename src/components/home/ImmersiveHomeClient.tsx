@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Category } from "@/types/category";
 import type { Speaker } from "@/types/speaker";
@@ -23,10 +23,26 @@ export function ImmersiveHomeClient({
   speakers = [],
 }: ImmersiveHomeClientProps) {
   const player = useAudioPlayer();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Initial category: default to 'iman-taqwa' or the first available category
   const defaultCategory =
-    categories.find((c) => c.slug === "iman-taqwa") ?? categories[0];
+    categories.find((c) => c.slug === "iman-taqwa") ?? categories[0] ?? {
+      id: "iman-taqwa",
+      name: "Iman & Taqwa",
+      slug: "iman-taqwa",
+      nameTa: "ஈமான் & தக்வா",
+      description: "Strengthen your faith, devotion, and mindfulness of Allah.",
+      icon: "heart",
+      coverImageUrl: null,
+      sortOrder: 1,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+    };
 
   const [activeCategory, setActiveCategory] = useState<Category>(
     () => defaultCategory
@@ -46,7 +62,7 @@ export function ImmersiveHomeClient({
     if (player.current && player.current.categoryId === activeCategory.id) {
       return player.current;
     }
-    return categoryBayans[0] ?? allBayan[0];
+    return categoryBayans[0] ?? allBayan[0] ?? null;
   }, [overrideBayan, player.current, activeCategory.id, categoryBayans, allBayan]);
 
   const handleSelectCategory = (category: Category) => {
@@ -87,86 +103,62 @@ export function ImmersiveHomeClient({
   };
 
   return (
-    <div className="relative h-dvh w-dvw overflow-hidden bg-slate-950 text-sand-50 select-none">
+    <div className="fixed inset-0 overflow-hidden bg-slate-950 text-sand-50 select-none">
       {/* Edge-to-Edge Dynamic Scene Background */}
       <ImmersiveBackground categorySlug={activeCategory.slug} />
 
-      {/* Floating Top Header */}
-      <ImmersiveHeader onShuffle={handleShuffle} />
+      {/* Floating Top Header with Top-Right Hamburger Menu */}
+      <ImmersiveHeader onShuffle={handleShuffle}>
+        <TopicPickerModal
+          categories={categories}
+          speakers={speakers}
+          allBayan={allBayan}
+          activeCategorySlug={activeCategory.slug}
+          onSelectCategory={handleSelectCategory}
+          onSelectSpeaker={handleSelectSpeaker}
+          onSelectBayan={handleSelectBayan}
+          onShuffle={handleShuffle}
+        />
+      </ImmersiveHeader>
 
-      {/* Main Canvas Content Viewport */}
-      <div className="relative z-10 flex h-full w-full flex-col items-center justify-between px-4 pt-[calc(env(safe-area-inset-top)+4.5rem)] pb-[calc(env(safe-area-inset-bottom)+1.5rem)] sm:px-6">
-        {/* Center Scene Title & Bismillah */}
-        <div className="flex flex-col items-center text-center my-auto">
+      {/* Main Canvas Center Viewport */}
+      <main className="absolute inset-0 z-10 flex flex-col items-center justify-center px-4 text-center pointer-events-none">
+        <div className="pointer-events-auto flex flex-col items-center max-w-lg w-full px-6 py-6 rounded-3xl bg-black/40 backdrop-blur-xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
           {/* Bismillah Calligraphy */}
-          <motion.p
-            key={`bismillah-${activeCategory.slug}`}
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 0.9, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="font-arabic text-lg sm:text-xl md:text-2xl text-emerald-200/90 tracking-wide drop-shadow-md mb-2"
-          >
+          <p className="font-arabic text-2xl sm:text-3xl md:text-4xl font-extrabold text-amber-300 drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] mb-2">
             بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
-          </motion.p>
+          </p>
 
           {/* Topic / Scene Title */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`title-${activeCategory.slug}`}
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.02 }}
-              transition={{ duration: 0.5 }}
-              className="flex flex-col items-center"
-            >
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight uppercase text-sand-50 drop-shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
-                {activeCategory.name}
-              </h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
+            {activeCategory.name}
+          </h1>
 
-              {/* Tamil Name / Subtitle */}
-              {activeCategory.nameTa && (
-                <span className="mt-1 text-sm md:text-base font-semibold text-emerald-300/90 tracking-wide">
-                  {activeCategory.nameTa}
-                </span>
-              )}
+          {/* Tamil Name / Subtitle */}
+          {activeCategory.nameTa && (
+            <span className="mt-1.5 text-base sm:text-lg font-bold text-emerald-300 tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
+              {activeCategory.nameTa}
+            </span>
+          )}
 
-              {/* Contextual Description */}
-              <p className="mt-2 max-w-sm md:max-w-md text-xs sm:text-sm text-sand-200/80 line-clamp-2">
-                {activeCategory.description || "Strengthen your connection with Allah."}
-              </p>
-            </motion.div>
-          </AnimatePresence>
+          {/* Contextual Description */}
+          <p className="mt-2.5 max-w-md text-xs sm:text-sm text-sand-100/90 font-medium leading-relaxed">
+            {activeCategory.description || "Strengthen your connection with Allah."}
+          </p>
         </div>
+      </main>
 
-        {/* Bottom Dock: Compact Audio Player + Pick Your Category Button */}
-        <div className="mt-auto flex flex-col items-center gap-3 pb-2">
+      {/* Bottom Floating Player */}
+      <div className="absolute bottom-4 sm:bottom-6 inset-x-0 z-30 flex flex-col items-center px-4 pointer-events-none">
+        <div className="pointer-events-auto">
           {/* Compact Integrated Bayan Player */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`player-${activeBayan.id}`}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.4 }}
-            >
-              <CompactBayanPlayer
-                bayan={activeBayan}
-                categoryList={categoryBayans}
-              />
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Bottom Pick Your Category Trigger */}
-          <TopicPickerModal
-            categories={categories}
-            speakers={speakers}
-            allBayan={allBayan}
-            activeCategorySlug={activeCategory.slug}
-            onSelectCategory={handleSelectCategory}
-            onSelectSpeaker={handleSelectSpeaker}
-            onSelectBayan={handleSelectBayan}
-            onShuffle={handleShuffle}
-          />
+          {activeBayan && (
+            <CompactBayanPlayer
+              bayan={activeBayan}
+              categoryList={categoryBayans}
+              onShuffleCategory={handleShuffle}
+            />
+          )}
         </div>
       </div>
     </div>

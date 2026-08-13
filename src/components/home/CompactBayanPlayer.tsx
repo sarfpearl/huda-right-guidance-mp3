@@ -4,15 +4,31 @@ import Image from "next/image";
 import type { BayanWithRelations } from "@/types/bayan";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import { CoverArt } from "@/components/ui/CoverArt";
-import { PlayIcon, PauseIcon, NextIcon, PrevIcon } from "@/components/ui/Icon";
+import {
+  PlayIcon,
+  PauseIcon,
+  NextIcon,
+  PrevIcon,
+  HeartIcon,
+  PlaylistAddIcon,
+  ShareIcon,
+  ShuffleIcon,
+  RepeatIcon,
+  EqualizerIcon,
+} from "@/components/ui/Icon";
 import { formatClock } from "@/lib/utils";
 
 interface CompactBayanPlayerProps {
   bayan: BayanWithRelations;
   categoryList?: BayanWithRelations[];
+  onShuffleCategory?: () => void;
 }
 
-export function CompactBayanPlayer({ bayan, categoryList }: CompactBayanPlayerProps) {
+export function CompactBayanPlayer({
+  bayan,
+  categoryList,
+  onShuffleCategory,
+}: CompactBayanPlayerProps) {
   const player = useAudioPlayer();
   const isCurrentTrack = player.current?.id === bayan.id;
   const isPlaying = isCurrentTrack && player.isPlaying;
@@ -41,11 +57,20 @@ export function CompactBayanPlayer({ bayan, categoryList }: CompactBayanPlayerPr
   };
 
   return (
-    <div className="relative w-[88dvw] max-w-[340px] rounded-[24px] bg-[#181510]/90 p-4 backdrop-blur-2xl border border-[#383126]/60 shadow-[0_20px_50px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.08)] transition-all select-none">
-      {/* Audio-Only Card Layout — Pure Neomorphic Audio Player */}
-      <div className="flex items-center gap-3">
+    <div className="relative w-[94dvw] max-w-[510px] p-5 sm:p-6 transition-all select-none">
+      {/* Figma Glass.svg Background Asset */}
+      <Image
+        src="/Glass.svg"
+        alt=""
+        fill
+        className="object-fill pointer-events-none -z-10"
+        priority
+      />
+
+      {/* Upper Section — Artwork + Track Info + Action Buttons */}
+      <div className="relative flex items-center justify-between gap-4 sm:gap-5 px-1 py-1">
         {/* Cover Artwork */}
-        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-[18px] bg-gradient-to-br from-emerald-950 to-slate-900 shadow-md border border-white/10">
+        <div className="relative h-28 w-28 sm:h-36 sm:w-36 shrink-0 overflow-hidden rounded-[22px] bg-gradient-to-br from-emerald-950 to-slate-900 shadow-[0_8px_20px_rgba(0,0,0,0.7)] border border-emerald-500/30">
           {bayan.coverImageUrl ? (
             <Image
               src={bayan.coverImageUrl}
@@ -57,73 +82,67 @@ export function CompactBayanPlayer({ bayan, categoryList }: CompactBayanPlayerPr
             <CoverArt
               seed={bayan.slug}
               icon={bayan.category.icon}
-              rounded="rounded-[18px]"
+              rounded="rounded-[22px]"
               className="h-full w-full"
             />
           )}
 
           {/* Equalizer overlay when playing audio */}
           {isPlaying && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
+            <div className="absolute inset-0 flex items-center justify-center bg-black/45 backdrop-blur-[1px]">
               <div className="flex items-end gap-0.5">
-                <span className="h-3 w-0.5 animate-[equalizer_0.6s_ease-in-out_infinite] bg-emerald-400" />
-                <span className="h-4 w-0.5 animate-[equalizer_0.8s_ease-in-out_infinite] bg-emerald-400" />
-                <span className="h-2.5 w-0.5 animate-[equalizer_0.5s_ease-in-out_infinite] bg-emerald-400" />
+                <span className="h-4 w-0.5 animate-[equalizer_0.6s_ease-in-out_infinite] bg-emerald-400" />
+                <span className="h-6 w-0.5 animate-[equalizer_0.8s_ease-in-out_infinite] bg-emerald-400" />
+                <span className="h-3.5 w-0.5 animate-[equalizer_0.5s_ease-in-out_infinite] bg-emerald-400" />
               </div>
             </div>
           )}
         </div>
 
-        {/* Track Title & Speaker */}
-        <div className="min-w-0 flex-1">
-          <h3 className="truncate font-serif text-sm font-bold text-white tracking-wide">
+        {/* Track Info (Title & Speaker) */}
+        <div className="min-w-0 flex-1 flex flex-col justify-center">
+          <span className="text-[10px] sm:text-xs font-semibold text-sand-300/50 uppercase tracking-widest">
+            Now Playing
+          </span>
+          <h3 className="truncate font-sans text-base sm:text-lg md:text-xl font-bold text-white tracking-tight mt-1">
             {bayan.title}
           </h3>
-          <p className="truncate text-xs font-medium text-emerald-400/90 mt-0.5">
+          <p className="truncate text-xs sm:text-sm font-medium text-emerald-400 mt-0.5">
             {bayan.speaker.name}
           </p>
+          <span className="truncate text-[11px] font-medium text-sand-300/60 mt-1">
+            {bayan.category.name}
+          </span>
         </div>
 
-        {/* Transport Controls (Prev / Play / Next) */}
-        <div className="flex items-center gap-1.5 shrink-0">
+        {/* Right Vertical Action Stack */}
+        <div className="flex flex-col gap-2.5 shrink-0">
           <button
             type="button"
-            onClick={player.previous}
-            className="grid h-7 w-7 place-items-center rounded-full text-sand-300 hover:text-white transition-all active:scale-90"
-            aria-label="Previous"
+            className="grid h-8 w-8 sm:h-9 sm:w-9 place-items-center rounded-full bg-[#14231c]/80 text-emerald-300/90 shadow-md border border-emerald-500/20 hover:text-emerald-200 hover:bg-[#1a2d24] active:scale-90 transition-all cursor-pointer backdrop-blur-md"
+            aria-label="Favorite"
           >
-            <PrevIcon className="text-xs" />
+            <HeartIcon className="text-xs sm:text-sm" />
           </button>
-
-          {/* Tapping Play Icon Plays Audio Live */}
           <button
             type="button"
-            onClick={handlePlayToggle}
-            className="grid h-11 w-11 place-items-center rounded-full bg-white text-slate-950 shadow-[0_6px_20px_rgba(255,255,255,0.25)] transition-transform active:scale-90 hover:bg-sand-100 cursor-pointer"
-            aria-label={isPlaying ? "Pause" : "Play"}
+            className="grid h-8 w-8 sm:h-9 sm:w-9 place-items-center rounded-full bg-[#14231c]/80 text-sand-300 shadow-md border border-emerald-500/20 hover:text-white hover:bg-[#1a2d24] active:scale-90 transition-all cursor-pointer backdrop-blur-md"
+            aria-label="Add to Queue"
           >
-            {isLoading ? (
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-950 border-t-transparent" />
-            ) : isPlaying ? (
-              <PauseIcon className="text-base" />
-            ) : (
-              <PlayIcon className="text-base ml-0.5" />
-            )}
+            <PlaylistAddIcon className="text-xs sm:text-sm" />
           </button>
-
           <button
             type="button"
-            onClick={player.next}
-            className="grid h-7 w-7 place-items-center rounded-full text-sand-300 hover:text-white transition-all active:scale-90"
-            aria-label="Next"
+            className="grid h-8 w-8 sm:h-9 sm:w-9 place-items-center rounded-full bg-[#14231c]/80 text-sand-300 shadow-md border border-emerald-500/20 hover:text-white hover:bg-[#1a2d24] active:scale-90 transition-all cursor-pointer backdrop-blur-md"
+            aria-label="Share"
           >
-            <NextIcon className="text-xs" />
+            <ShareIcon className="text-xs sm:text-sm" />
           </button>
         </div>
       </div>
 
-      {/* Audio Progress Slider & Time Labels */}
-      <div className="mt-3.5">
+      {/* Lower Section — Audio Progress Slider & Time Labels */}
+      <div className="mt-5 px-1">
         <div className="relative flex items-center">
           <input
             type="range"
@@ -133,21 +152,96 @@ export function CompactBayanPlayer({ bayan, categoryList }: CompactBayanPlayerPr
             value={currentTime}
             onChange={handleSeek}
             aria-label="Progress"
-            className="neomorph-range h-2 w-full cursor-pointer appearance-none rounded-full bg-white/10"
+            className="neomorph-range h-2.5 w-full cursor-pointer appearance-none rounded-full bg-black/80 shadow-[inset_0_2px_4px_rgba(0,0,0,0.9)] border border-white/10"
             style={{
               background: `linear-gradient(to right, #10b981 ${
                 (currentTime / (totalDuration || 1)) * 100
-              }%, rgba(255, 255, 255, 0.15) ${
+              }%, rgba(0, 0, 0, 0.75) ${
                 (currentTime / (totalDuration || 1)) * 100
               }%)`,
             }}
           />
         </div>
 
-        <div className="mt-1 flex items-center justify-between text-[11px] font-mono text-sand-200/60">
+        <div className="mt-2 flex items-center justify-between text-xs font-mono font-medium text-sand-300/60">
           <span>{formatClock(currentTime)}</span>
           <span>{formatClock(totalDuration)}</span>
         </div>
+      </div>
+
+      {/* Bottom Transport Controls Bar */}
+      <div className="mt-4 flex items-center justify-between px-2">
+        <button
+          type="button"
+          onClick={onShuffleCategory}
+          title="Random Category / Shuffle"
+          className="grid h-9 w-9 place-items-center rounded-full text-sand-300/50 hover:text-emerald-400 active:scale-90 transition-all cursor-pointer"
+          aria-label="Shuffle Category"
+        >
+          <ShuffleIcon className="text-sm" />
+        </button>
+
+        <button
+          type="button"
+          className="grid h-9 w-9 place-items-center rounded-full text-sand-300/50 hover:text-white transition-all active:scale-90 cursor-pointer"
+          aria-label="Repeat"
+        >
+          <RepeatIcon className="text-sm" />
+        </button>
+
+        {/* Center Primary Transport Controls */}
+        <div className="flex items-center gap-3 sm:gap-4">
+          <button
+            type="button"
+            onClick={player.previous}
+            className="grid h-10 w-10 sm:h-11 sm:w-11 place-items-center rounded-full bg-[#0e1914]/80 text-sand-100 shadow-md border border-emerald-500/20 hover:text-white active:scale-90 transition-all cursor-pointer backdrop-blur-md"
+            aria-label="Previous"
+          >
+            <PrevIcon className="text-sm" />
+          </button>
+
+          {/* Glowing Glassmorphic Emerald Play Button */}
+          <button
+            type="button"
+            onClick={handlePlayToggle}
+            className="grid h-14 w-14 sm:h-15 sm:w-15 place-items-center rounded-full bg-emerald-500 text-slate-950 shadow-[0_6px_25px_rgba(16,185,129,0.45)] border border-emerald-300/50 transition-transform hover:scale-105 active:scale-95 cursor-pointer"
+            aria-label={isPlaying ? "Pause" : "Play"}
+          >
+            {isLoading ? (
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-950 border-t-transparent" />
+            ) : isPlaying ? (
+              <PauseIcon className="text-lg" />
+            ) : (
+              <PlayIcon className="text-lg ml-0.5" />
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={player.next}
+            className="grid h-10 w-10 sm:h-11 sm:w-11 place-items-center rounded-full bg-[#0e1914]/80 text-sand-100 shadow-md border border-emerald-500/20 hover:text-white active:scale-90 transition-all cursor-pointer backdrop-blur-md"
+            aria-label="Next"
+          >
+            <NextIcon className="text-sm" />
+          </button>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            const rates = [1, 1.25, 1.5, 2];
+            const nextIdx = (rates.indexOf(player.playbackRate) + 1) % rates.length;
+            player.setPlaybackRate?.(rates[nextIdx]);
+          }}
+          className="grid h-9 w-9 place-items-center rounded-full text-sand-300/50 hover:text-white transition-all active:scale-90 cursor-pointer"
+          aria-label="Speed"
+        >
+          <EqualizerIcon className="text-sm" />
+        </button>
+
+        <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/15 px-1.5 py-0.5 rounded-full border border-emerald-500/30">
+          {player.playbackRate}x
+        </span>
       </div>
     </div>
   );

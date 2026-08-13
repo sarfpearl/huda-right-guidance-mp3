@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -8,12 +9,18 @@ interface ImmersiveBackgroundProps {
 }
 
 export function ImmersiveBackground({ categorySlug }: ImmersiveBackgroundProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <div className="absolute inset-0 z-0 overflow-hidden bg-slate-950">
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence mode="popLayout" initial={false}>
         <motion.div
           key={categorySlug}
-          initial={{ opacity: 0, scale: 1.04 }}
+          initial={mounted ? { opacity: 0, scale: 1.04 } : false}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: [0.25, 1, 0.5, 1] }}
@@ -23,9 +30,6 @@ export function ImmersiveBackground({ categorySlug }: ImmersiveBackgroundProps) 
         </motion.div>
       </AnimatePresence>
 
-      {/* Atmospheric Overlays matching reference (subtle dark gradient top & bottom) */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80" />
-      <div className="pointer-events-none absolute inset-0 bg-radial-vignette opacity-70" />
     </div>
   );
 }

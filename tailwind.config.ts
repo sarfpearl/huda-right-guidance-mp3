@@ -53,12 +53,20 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
+          "var(--font-poppins)",
+          "Poppins",
           "var(--font-sans)",
           "var(--font-tamil)",
           "system-ui",
           "sans-serif",
         ],
-        tamil: ["var(--font-tamil)", "var(--font-sans)", "sans-serif"],
+        serif: [
+          "var(--font-poppins)",
+          "Poppins",
+          "sans-serif",
+        ],
+        poppins: ["var(--font-poppins)", "Poppins", "sans-serif"],
+        tamil: ["var(--font-tamil)", "var(--font-poppins)", "Poppins", "sans-serif"],
         arabic: ["var(--font-arabic)", "serif"],
       },
       borderRadius: {

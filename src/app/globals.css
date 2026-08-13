@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,6 +12,7 @@
  */
 @layer base {
   :root {
+    --font-poppins: 'Poppins', sans-serif;
     /* Height reserved for the mobile bottom nav (incl. safe area). The player
        bar is positioned `bottom: var(--nav-height)` so the two never overlap. */
     --nav-height: calc(56px + env(safe-area-inset-bottom));
@@ -36,20 +39,29 @@
     border-color: rgb(var(--border));
   }
 
-  html {
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  /* No bottom nav on md+ — the player sits flush to the viewport bottom. */
-  @media (min-width: 768px) {
-    :root {
-      --nav-height: 0px;
-    }
+  html,
+  body,
+  button,
+  input,
+  select,
+  textarea,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  span,
+  a,
+  div {
+    font-family: var(--font-poppins), 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 
   body {
     background-color: rgb(var(--background));
     color: rgb(var(--foreground));
+    font-family: var(--font-poppins), 'Poppins', system-ui, sans-serif;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -110,6 +122,10 @@
         rgba(198, 151, 73, 0.05) 22px 23px
       );
     background-size: 24px 24px, 100% 100%, 100% 100%;
+  }
+
+  .bg-radial-vignette {
+    background: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.65) 100%);
   }
 }
 

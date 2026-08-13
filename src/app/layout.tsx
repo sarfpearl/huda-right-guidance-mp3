@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import { siteConfig } from "@/lib/site";
 import { ThemeProvider, themeInitScript } from "@/components/theme/ThemeProvider";
@@ -7,6 +8,13 @@ import { Header } from "@/components/navigation/Header";
 import { MobileBottomNav } from "@/components/navigation/MobileBottomNav";
 import { GlobalAudioPlayer } from "@/components/player/GlobalAudioPlayer";
 import { MainLayout } from "@/components/layout/MainLayout";
+
+const poppins = Poppins({
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+  variable: "--font-poppins",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -60,12 +68,12 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className="font-sans"
+      className={`${poppins.variable} font-sans`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="min-h-screen font-sans antialiased">
+      <body className={`${poppins.variable} min-h-screen font-sans antialiased`}>
         <ThemeProvider>
           <AudioPlayerProvider>
             <a
