@@ -6,7 +6,7 @@ import { absoluteUrl } from "@/lib/site";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Huda — Right Guidance · Immersive Islamic Bayan Experience",
+  title: "Huda Bayan · Immersive Islamic Bayan Experience",
   description:
     "An immersive Islamic Bayan experience. Listen to talks on Iman, Qur'an, Salah, Dua, and guidance in Tamil.",
   alternates: { canonical: absoluteUrl("/") },

@@ -1,4 +1,4 @@
-# Huda — Right Guidance MP3 🕌🎧
+# Huda Bayan 🕌🎧
 
 An immersive, state-of-the-art Islamic Audio & Bayan web application built with **Next.js 15 (App Router)**, **TypeScript**, and **Vanilla Tailwind CSS**. Inspired by `https://tamilfm.co/v/auto`.
 

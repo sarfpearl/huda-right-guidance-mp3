@@ -1,7 +1,7 @@
 /** Central site configuration used for SEO, share links, and branding. */
 export const siteConfig = {
   name: "Huda",
-  fullName: "Huda — Right Guidance",
+  fullName: "Huda Bayan",
   tagline: "Listen. Reflect. Improve.",
   description:
     "Discover Islamic Bayan, reminders and talks in Tamil that inspire faith and reflection. Listen to lectures by topic and speaker.",

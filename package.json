@@ -1,8 +1,8 @@
 {
-  "name": "huda-right-guidance",
+  "name": "huda-bayan",
   "version": "0.1.0",
   "private": true,
-  "description": "Huda — Right Guidance. An Islamic Bayan listening platform (Tamil).",
+  "description": "Huda Bayan. An Islamic Bayan listening platform (Tamil).",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

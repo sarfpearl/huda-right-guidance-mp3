@@ -1,6 +1,6 @@
-# Huda — Right Guidance MP3 · YouTube Music & Audio Integration Guide
+# Huda Bayan · YouTube Music & Audio Integration Guide
 
-> Comprehensive guide on YouTube Music integration, playlist streaming, iframe embedding, API credentials, and licensing considerations for Huda Right Guidance MP3.
+> Comprehensive guide on YouTube Music integration, playlist streaming, iframe embedding, API credentials, and licensing considerations for Huda Bayan.
 
 ---
 
@@ -16,7 +16,7 @@
 
 ## 1. Overview
 
-**Huda Right Guidance MP3** is an immersive Islamic audio web application inspired by `https://tamilfm.co/v/auto`. It features:
+**Huda Bayan** is an immersive Islamic audio web application inspired by `https://tamilfm.co/v/auto`. It features:
 - **Neomorphic 3D Audio Player**: Floating dark glass player card with animated equalizer, progress bar, and transport controls.
 - **Continuous YouTube Playlist Auto-Play**: Seamless playback of YouTube & YouTube Music playlists (e.g., Ramadan playlist `PLFRt54vRoHJs`).
 - **Control Center Right Panel**: Slide-out drawer with 3 tabs (*Categories*, *Speakers*, *Explore*) and instant search.
@@ -137,4 +137,4 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to view the 
 
 ---
 
-*Huda Right Guidance MP3 — Created for Islamic Reminders, Bayans & Guidance.*
+*Huda Bayan — Created for Islamic Reminders, Bayans & Guidance.*

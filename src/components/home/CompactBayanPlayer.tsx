@@ -57,7 +57,47 @@ export function CompactBayanPlayer({
   };
 
   return (
-    <div className="relative w-[94dvw] max-w-[510px] rounded-[38px] bg-[#0c1412]/92 backdrop-blur-xl border border-emerald-500/25 shadow-[0_25px_60px_rgba(0,0,0,0.95)] p-5 sm:p-6 transition-all select-none">
+    <div className="relative w-[94dvw] max-w-[510px] rounded-[40px] overflow-hidden bg-black/30 backdrop-blur-2xl border border-white/15 shadow-[0_25px_60px_rgba(0,0,0,0.85)] p-5 sm:p-6 transition-all select-none">
+      {/* Exact Figma Node 1324:214 SVG Glass Filter & Surface */}
+      <svg
+        className="absolute inset-0 h-full w-full pointer-events-none -z-10 rounded-[40px]"
+        viewBox="0 0 510 342"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        preserveAspectRatio="none"
+      >
+        <g filter="url(#figma_glass_filter)">
+          <rect width="510" height="342" rx="40" fill="black" fillOpacity="0.16" />
+        </g>
+        <defs>
+          <filter
+            id="figma_glass_filter"
+            x="0"
+            y="0"
+            width="515.84"
+            height="347.84"
+            filterUnits="userSpaceOnUse"
+            colorInterpolationFilters="sRGB"
+          >
+            <feFlood floodOpacity="0" result="BackgroundImageFix" />
+            <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+            <feColorMatrix
+              in="SourceAlpha"
+              type="matrix"
+              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+              result="hardAlpha"
+            />
+            <feOffset dx="5.84036" dy="5.84036" />
+            <feGaussianBlur stdDeviation="4.38027" />
+            <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
+            <feColorMatrix
+              type="matrix"
+              values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.2 0"
+            />
+            <feBlend mode="normal" in2="shape" result="effect1_innerShadow_1324_214" />
+          </filter>
+        </defs>
+      </svg>
       {/* Upper Section — Artwork + Track Info + Action Buttons */}
       <div className="relative flex items-center justify-between gap-4 sm:gap-5">
         {/* Cover Artwork */}

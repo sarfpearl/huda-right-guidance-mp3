@@ -5,7 +5,7 @@ import { siteConfig } from "@/lib/site";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = "Bayan on Huda — Right Guidance";
+export const alt = "Bayan on Huda Bayan";
 
 export async function generateStaticParams() {
   const slugs = await getAllBayanSlugs();
@@ -57,7 +57,7 @@ export default async function OgImage({
             <span>{siteConfig.name}</span>
             <span style={{ color: "#aed7c1", fontWeight: 400 }}>
               {" "}
-              · Right Guidance
+              · Bayan
             </span>
           </div>
         </div>

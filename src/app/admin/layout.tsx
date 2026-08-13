@@ -33,7 +33,7 @@ export default function AdminLayout({
             <span className="text-sm font-semibold">
               Huda Admin
               <span className="block text-[10px] font-normal uppercase tracking-widest text-muted">
-                Right Guidance
+                Bayan
               </span>
             </span>
           </Link>

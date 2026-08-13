@@ -1,5 +1,5 @@
 -- ============================================================================
---  Huda — Right Guidance : Supabase schema
+--  Huda Bayan : Supabase schema
 --  Run in the Supabase SQL editor (or via the CLI) to provision the database.
 --  Includes tables, indexes, Row Level Security, a play-count RPC, and the
 --  storage buckets for audio & images.

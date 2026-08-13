@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Huda — Right Guidance design tokens.
+ * Huda Bayan design tokens.
  * Calm, spiritual, elegant, minimal, premium. Deep Islamic green primary,
  * warm gold accent (used sparingly), off-white / warm-neutral surfaces,
  * deep charcoal (not pure black) for dark mode.
