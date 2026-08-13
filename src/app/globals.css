@@ -1,0 +1,214 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Huda — Right Guidance
+ * Semantic CSS variables drive light/dark theming. Tailwind reads brand
+ * colors from tailwind.config; these vars handle surface/text semantics so
+ * components stay theme-agnostic.
+ */
+@layer base {
+  :root {
+    /* Height reserved for the mobile bottom nav (incl. safe area). The player
+       bar is positioned `bottom: var(--nav-height)` so the two never overlap. */
+    --nav-height: calc(56px + env(safe-area-inset-bottom));
+    --background: 251 249 244; /* sand-50 */
+    --surface: 255 255 255;
+    --surface-muted: 245 241 232; /* sand-100 */
+    --border: 233 226 211; /* sand-200 */
+    --foreground: 20 23 22; /* charcoal */
+    --foreground-muted: 90 98 94;
+    --ring: 26 81 64; /* primary-700 */
+  }
+
+  .dark {
+    --background: 14 16 15; /* charcoal-950 */
+    --surface: 28 31 30; /* charcoal-800 */
+    --surface-muted: 20 23 22; /* charcoal-900 */
+    --border: 44 50 47;
+    --foreground: 240 243 240;
+    --foreground-muted: 165 173 168;
+    --ring: 125 189 157; /* primary-300 */
+  }
+
+  * {
+    border-color: rgb(var(--border));
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* No bottom nav on md+ — the player sits flush to the viewport bottom. */
+  @media (min-width: 768px) {
+    :root {
+      --nav-height: 0px;
+    }
+  }
+
+  body {
+    background-color: rgb(var(--background));
+    color: rgb(var(--foreground));
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Visible focus states for keyboard users */
+  :focus-visible {
+    outline: 2px solid rgb(var(--ring));
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .surface {
+    background-color: rgb(var(--surface));
+  }
+  .surface-muted {
+    background-color: rgb(var(--surface-muted));
+  }
+  .text-muted {
+    color: rgb(var(--foreground-muted));
+  }
+
+  /* Container respecting player + bottom-nav safe areas on mobile */
+  .app-shell {
+    padding-bottom: calc(var(--player-offset, 0px) + env(safe-area-inset-bottom));
+  }
+
+  /* Subtle Islamic geometric pattern used behind the hero. Purely decorative. */
+  .islamic-pattern {
+    background-color: rgb(var(--surface-muted));
+    background-image: radial-gradient(
+        circle at 1px 1px,
+        rgb(var(--border)) 1px,
+        transparent 0
+      ),
+      repeating-linear-gradient(
+        45deg,
+        transparent 0 22px,
+        rgba(198, 151, 73, 0.05) 22px 23px
+      ),
+      repeating-linear-gradient(
+        -45deg,
+        transparent 0 22px,
+        rgba(198, 151, 73, 0.05) 22px 23px
+      );
+    background-size: 24px 24px, 100% 100%, 100% 100%;
+  }
+}
+
+@keyframes equalizer {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@layer utilities {
+  /* Skeleton shimmer */
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: rgb(var(--surface-muted));
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.08),
+      transparent
+    );
+    animation: shimmer 1.6s infinite;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Range slider thumb (progress + volume) */
+.player-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 9999px;
+  background: rgb(var(--ring));
+  border: 2px solid rgb(var(--surface));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+.player-range::-moz-range-thumb {
+  height: 14px;
+  width: 14px;
+  border-radius: 9999px;
+  background: rgb(var(--ring));
+  border: 2px solid rgb(var(--surface));
+  cursor: pointer;
+}
+.neomorph-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 9999px;
+  background: #10b981;
+  border: 3px solid #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+}
+.neomorph-range::-moz-range-thumb {
+  height: 16px;
+  width: 16px;
+  border-radius: 9999px;
+  background: #10b981;
+  border: 3px solid #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+}

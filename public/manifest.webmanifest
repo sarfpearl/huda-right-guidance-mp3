@@ -1,0 +1,19 @@
+{
+  "name": "Huda — Right Guidance",
+  "short_name": "Huda",
+  "description": "Discover and listen to Islamic Bayan and reminders in Tamil.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0e100f",
+  "theme_color": "#1a5140",
+  "orientation": "portrait",
+  "categories": ["education", "lifestyle", "music"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
