@@ -57,20 +57,11 @@ export function CompactBayanPlayer({
   };
 
   return (
-    <div className="relative w-[94dvw] max-w-[510px] p-5 sm:p-6 transition-all select-none">
-      {/* Figma Glass.svg Background Asset */}
-      <Image
-        src="/Glass.svg"
-        alt=""
-        fill
-        className="object-fill pointer-events-none -z-10"
-        priority
-      />
-
+    <div className="relative w-[94dvw] max-w-[510px] rounded-[38px] bg-[#0c1412]/92 backdrop-blur-xl border border-emerald-500/25 shadow-[0_25px_60px_rgba(0,0,0,0.95)] p-5 sm:p-6 transition-all select-none">
       {/* Upper Section — Artwork + Track Info + Action Buttons */}
-      <div className="relative flex items-center justify-between gap-4 sm:gap-5 px-1 py-1">
+      <div className="relative flex items-center justify-between gap-4 sm:gap-5">
         {/* Cover Artwork */}
-        <div className="relative h-28 w-28 sm:h-36 sm:w-36 shrink-0 overflow-hidden rounded-[22px] bg-gradient-to-br from-emerald-950 to-slate-900 shadow-[0_8px_20px_rgba(0,0,0,0.7)] border border-emerald-500/30">
+        <div className="relative h-28 w-28 sm:h-36 sm:w-36 shrink-0 overflow-hidden rounded-[22px] bg-gradient-to-br from-emerald-950 to-slate-900 shadow-md border border-emerald-500/30">
           {bayan.coverImageUrl ? (
             <Image
               src={bayan.coverImageUrl}
@@ -119,21 +110,21 @@ export function CompactBayanPlayer({
         <div className="flex flex-col gap-2.5 shrink-0">
           <button
             type="button"
-            className="grid h-8 w-8 sm:h-9 sm:w-9 place-items-center rounded-full bg-[#14231c]/80 text-emerald-300/90 shadow-md border border-emerald-500/20 hover:text-emerald-200 hover:bg-[#1a2d24] active:scale-90 transition-all cursor-pointer backdrop-blur-md"
+            className="grid h-8 w-8 sm:h-9 sm:w-9 place-items-center rounded-full bg-black/40 text-emerald-400 border border-white/10 hover:bg-black/60 active:scale-90 transition-all cursor-pointer"
             aria-label="Favorite"
           >
             <HeartIcon className="text-xs sm:text-sm" />
           </button>
           <button
             type="button"
-            className="grid h-8 w-8 sm:h-9 sm:w-9 place-items-center rounded-full bg-[#14231c]/80 text-sand-300 shadow-md border border-emerald-500/20 hover:text-white hover:bg-[#1a2d24] active:scale-90 transition-all cursor-pointer backdrop-blur-md"
+            className="grid h-8 w-8 sm:h-9 sm:w-9 place-items-center rounded-full bg-black/40 text-sand-300 border border-white/10 hover:bg-black/60 active:scale-90 transition-all cursor-pointer"
             aria-label="Add to Queue"
           >
             <PlaylistAddIcon className="text-xs sm:text-sm" />
           </button>
           <button
             type="button"
-            className="grid h-8 w-8 sm:h-9 sm:w-9 place-items-center rounded-full bg-[#14231c]/80 text-sand-300 shadow-md border border-emerald-500/20 hover:text-white hover:bg-[#1a2d24] active:scale-90 transition-all cursor-pointer backdrop-blur-md"
+            className="grid h-8 w-8 sm:h-9 sm:w-9 place-items-center rounded-full bg-black/40 text-sand-300 border border-white/10 hover:bg-black/60 active:scale-90 transition-all cursor-pointer"
             aria-label="Share"
           >
             <ShareIcon className="text-xs sm:text-sm" />
@@ -194,13 +185,13 @@ export function CompactBayanPlayer({
           <button
             type="button"
             onClick={player.previous}
-            className="grid h-10 w-10 sm:h-11 sm:w-11 place-items-center rounded-full bg-[#0e1914]/80 text-sand-100 shadow-md border border-emerald-500/20 hover:text-white active:scale-90 transition-all cursor-pointer backdrop-blur-md"
+            className="grid h-10 w-10 sm:h-11 sm:w-11 place-items-center rounded-full bg-black/40 text-sand-100 border border-white/10 hover:text-white hover:bg-black/60 active:scale-90 transition-all cursor-pointer"
             aria-label="Previous"
           >
             <PrevIcon className="text-sm" />
           </button>
 
-          {/* Glowing Glassmorphic Emerald Play Button */}
+          {/* Glowing Emerald Play Button */}
           <button
             type="button"
             onClick={handlePlayToggle}
@@ -219,7 +210,7 @@ export function CompactBayanPlayer({
           <button
             type="button"
             onClick={player.next}
-            className="grid h-10 w-10 sm:h-11 sm:w-11 place-items-center rounded-full bg-[#0e1914]/80 text-sand-100 shadow-md border border-emerald-500/20 hover:text-white active:scale-90 transition-all cursor-pointer backdrop-blur-md"
+            className="grid h-10 w-10 sm:h-11 sm:w-11 place-items-center rounded-full bg-black/40 text-sand-100 border border-white/10 hover:text-white hover:bg-black/60 active:scale-90 transition-all cursor-pointer"
             aria-label="Next"
           >
             <NextIcon className="text-sm" />
