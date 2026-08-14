@@ -2,7 +2,7 @@
 
 > **For:** Claude (or any AI assistant continuing this project)
 > **Date:** 2026-08-14
-> **Project Path:** `/Users/pearl-9744/Claude/Projects/Huda Right Guidance MP3`
+> **Project Path:** `/Users/pearl-9744/Claude/Projects/Huda Bayan`
 > **Dev Server:** `npm run dev` → [http://localhost:3000](http://localhost:3000)
 
 ---
@@ -29,7 +29,7 @@ Inspired by: `https://tamilfm.co/v/auto`
 ## 🗂️ Project Structure
 
 ```
-Huda Right Guidance MP3/         ← root folder (legacy name, do not rename)
+Huda Bayan/                      ← root folder
 ├── src/
 │   ├── app/
 │   │   ├── page.tsx             ← Home page (immersive full-screen)
@@ -207,7 +207,7 @@ YOUTUBE_API_KEY=
 ## 🚀 Quick Start
 
 ```bash
-cd "/Users/pearl-9744/Claude/Projects/Huda Right Guidance MP3"
+cd "/Users/pearl-9744/Claude/Projects/Huda Bayan"
 
 npm install
 npm run dev
@@ -235,7 +235,7 @@ eb8780b  HuDa Right Guidance (initial commit)
 
 ## 💡 Important Notes for the Next Developer
 
-1. **Folder name on disk is `Huda Right Guidance MP3`** — do NOT rename it; git history is attached to this path.
+1. **Folder name on disk is now `Huda Bayan`** — matches the project name. Git history is intact.
 
 2. **The `font-arabic` Tailwind class** is configured in `tailwind.config.ts` but `--font-arabic` CSS variable is never defined → Bismillah renders as serif fallback. To fix, load an Arabic font in `layout.tsx`.
 
