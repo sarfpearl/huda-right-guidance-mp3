@@ -26,7 +26,7 @@ export function ImmersiveHeader({ onShuffle, children }: ImmersiveHeaderProps) {
     : "https://music.youtube.com/playlist?list=PLFRt54vRoHJs";
 
   return (
-    <header className="absolute top-0 inset-x-0 z-30 flex items-center justify-between px-4 pt-[calc(env(safe-area-inset-top)+1rem)] sm:px-8 pb-4 pointer-events-none">
+    <header className="absolute top-0 inset-x-0 z-50 flex items-center justify-between px-4 pt-[calc(env(safe-area-inset-top)+1rem)] sm:px-8 pb-4 pointer-events-none">
       {/* Top Left Time & Location */}
       <TimeLocationWidget />
 

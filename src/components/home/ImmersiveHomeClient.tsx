@@ -103,7 +103,7 @@ export function ImmersiveHomeClient({
   };
 
   return (
-    <div className="fixed inset-0 overflow-hidden bg-slate-950 text-sand-50 select-none">
+    <div className="fixed inset-0 z-10 overflow-hidden bg-slate-950 text-sand-50 select-none">
       {/* Edge-to-Edge Dynamic Scene Background */}
       <ImmersiveBackground categorySlug={activeCategory.slug} />
 
@@ -122,7 +122,7 @@ export function ImmersiveHomeClient({
       </ImmersiveHeader>
 
       {/* Main Canvas Center Viewport */}
-      <main className="absolute inset-0 z-10 flex flex-col items-center justify-center px-4 text-center pointer-events-none">
+      <main className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 text-center pointer-events-none">
         <div className="pointer-events-auto flex flex-col items-center max-w-lg w-full px-6 py-6 rounded-3xl bg-black/40 backdrop-blur-xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
           {/* Bismillah Calligraphy */}
           <p className="font-arabic text-2xl sm:text-3xl md:text-4xl font-extrabold text-amber-300 drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] mb-2">
@@ -149,7 +149,7 @@ export function ImmersiveHomeClient({
       </main>
 
       {/* Bottom Floating Player */}
-      <div className="absolute bottom-4 sm:bottom-6 inset-x-0 z-30 flex flex-col items-center px-4 pointer-events-none">
+      <div className="absolute bottom-4 sm:bottom-6 inset-x-0 z-40 flex flex-col items-center px-4 pointer-events-none">
         <div className="pointer-events-auto">
           {/* Compact Integrated Bayan Player */}
           {activeBayan && (
