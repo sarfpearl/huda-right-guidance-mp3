@@ -158,6 +158,13 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         /* ignore */
       }
     }
+    if (ytPlayerRef.current && typeof ytPlayerRef.current.setPlaybackRate === "function") {
+      try {
+        ytPlayerRef.current.setPlaybackRate(playbackRate);
+      } catch {
+        /* ignore */
+      }
+    }
   }, [volume, isMuted, playbackRate]);
 
   // Periodic timer for updating progress and duration when YouTube player is active

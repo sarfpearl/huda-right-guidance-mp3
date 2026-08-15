@@ -70,9 +70,9 @@ export function TimeLocationWidget({
   if (!mounted) {
     return (
       <div
-        className={`pointer-events-auto flex flex-col items-center justify-center rounded-2xl bg-black/60 px-5 py-2 border border-white/10 backdrop-blur-md shadow-md text-center min-w-[135px] min-h-[52px] ${className}`}
+        className={`pointer-events-auto flex flex-col items-center justify-center rounded-full bg-black/[0.08] px-[2rem] py-2 border border-white/15 backdrop-blur-[6px] shadow-md text-center min-w-[135px] min-h-[52px] ${className}`}
       >
-        <span className="text-2xl font-extrabold text-white tracking-tight leading-none">
+        <span className="text-lg font-extrabold text-white tracking-tight leading-none">
           --:--
         </span>
         <span className="text-xs font-medium text-slate-300 tracking-wide mt-1 leading-none">
@@ -84,9 +84,9 @@ export function TimeLocationWidget({
 
   return (
     <div
-      className={`pointer-events-auto flex flex-col items-center justify-center rounded-2xl bg-black/65 px-5 py-2 border border-white/15 backdrop-blur-md shadow-lg text-center min-w-[135px] ${className}`}
+      className={`pointer-events-auto flex flex-col items-center justify-center rounded-full bg-black/[0.08] px-[2rem] py-2 border border-white/15 backdrop-blur-[6px] shadow-lg text-center min-w-[135px] ${className}`}
     >
-      <span className="text-2xl font-extrabold text-white tracking-tight leading-tight drop-shadow-sm font-sans">
+      <span className="text-lg font-extrabold text-white tracking-tight leading-tight drop-shadow-sm font-sans">
         {timeStr}
       </span>
       <span className="text-xs font-medium text-slate-200/90 tracking-wide leading-tight mt-0.5">

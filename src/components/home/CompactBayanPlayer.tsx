@@ -57,51 +57,12 @@ export function CompactBayanPlayer({
   };
 
   return (
-    <div className="relative w-[94dvw] max-w-[510px] rounded-[40px] overflow-hidden bg-black/30 backdrop-blur-2xl border border-white/15 shadow-[0_25px_60px_rgba(0,0,0,0.85)] p-5 sm:p-6 transition-all select-none">
-      {/* Exact Figma Node 1324:214 SVG Glass Filter & Surface */}
-      <svg
-        className="absolute inset-0 h-full w-full pointer-events-none -z-10 rounded-[40px]"
-        viewBox="0 0 510 342"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="none"
-      >
-        <g filter="url(#figma_glass_filter)">
-          <rect width="510" height="342" rx="40" fill="black" fillOpacity="0.16" />
-        </g>
-        <defs>
-          <filter
-            id="figma_glass_filter"
-            x="0"
-            y="0"
-            width="515.84"
-            height="347.84"
-            filterUnits="userSpaceOnUse"
-            colorInterpolationFilters="sRGB"
-          >
-            <feFlood floodOpacity="0" result="BackgroundImageFix" />
-            <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-            <feColorMatrix
-              in="SourceAlpha"
-              type="matrix"
-              values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-              result="hardAlpha"
-            />
-            <feOffset dx="5.84036" dy="5.84036" />
-            <feGaussianBlur stdDeviation="4.38027" />
-            <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-            <feColorMatrix
-              type="matrix"
-              values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.2 0"
-            />
-            <feBlend mode="normal" in2="shape" result="effect1_innerShadow_1324_214" />
-          </filter>
-        </defs>
-      </svg>
+    <div className="relative w-[94dvw] sm:w-[80dvw] max-w-[680px] rounded-[40px] overflow-hidden bg-black/[0.08] backdrop-blur-[6px] border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8)] px-6 py-5 sm:px-10 sm:py-6 transition-all select-none">
+      {/* iOS Liquid Glass surface — single unified glass (Glass.svg tint + inner-shadow rim) */}
       {/* Upper Section — Artwork + Track Info + Action Buttons */}
       <div className="relative flex items-center justify-between gap-4 sm:gap-5">
         {/* Cover Artwork */}
-        <div className="relative h-28 w-28 sm:h-36 sm:w-36 shrink-0 overflow-hidden rounded-[22px] bg-gradient-to-br from-emerald-950 to-slate-900 shadow-md border border-emerald-500/30">
+        <div className="relative h-28 w-28 sm:h-36 sm:w-36 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-emerald-950 to-slate-900 shadow-md border border-emerald-500/30">
           {bayan.coverImageUrl ? (
             <Image
               src={bayan.coverImageUrl}
@@ -113,7 +74,7 @@ export function CompactBayanPlayer({
             <CoverArt
               seed={bayan.slug}
               icon={bayan.category.icon}
-              rounded="rounded-[22px]"
+              rounded="rounded-full"
               className="h-full w-full"
             />
           )}
@@ -183,11 +144,11 @@ export function CompactBayanPlayer({
             value={currentTime}
             onChange={handleSeek}
             aria-label="Progress"
-            className="neomorph-range h-2.5 w-full cursor-pointer appearance-none rounded-full bg-black/80 shadow-[inset_0_2px_4px_rgba(0,0,0,0.9)] border border-white/10"
+            className="neomorph-range h-2.5 w-full cursor-pointer appearance-none rounded-full"
             style={{
               background: `linear-gradient(to right, #10b981 ${
                 (currentTime / (totalDuration || 1)) * 100
-              }%, rgba(0, 0, 0, 0.75) ${
+              }%, rgba(0,0,0,0.4) ${
                 (currentTime / (totalDuration || 1)) * 100
               }%)`,
             }}
@@ -201,12 +162,12 @@ export function CompactBayanPlayer({
       </div>
 
       {/* Bottom Transport Controls Bar */}
-      <div className="mt-4 flex items-center justify-between px-2">
+      <div className="mt-4 flex items-center justify-center gap-2 sm:justify-between sm:gap-0 px-2">
         <button
           type="button"
           onClick={onShuffleCategory}
           title="Random Category / Shuffle"
-          className="grid h-9 w-9 place-items-center rounded-full text-sand-300/50 hover:text-emerald-400 active:scale-90 transition-all cursor-pointer"
+          className="grid h-9 w-9 place-items-center rounded-full bg-black/40 border border-white/10 text-sand-300/50 hover:bg-black/60 hover:text-emerald-400 active:scale-90 transition-all cursor-pointer"
           aria-label="Shuffle Category"
         >
           <ShuffleIcon className="text-sm" />
@@ -214,7 +175,7 @@ export function CompactBayanPlayer({
 
         <button
           type="button"
-          className="grid h-9 w-9 place-items-center rounded-full text-sand-300/50 hover:text-white transition-all active:scale-90 cursor-pointer"
+          className="grid h-9 w-9 place-items-center rounded-full bg-black/40 border border-white/10 text-sand-300/50 hover:bg-black/60 hover:text-white transition-all active:scale-90 cursor-pointer"
           aria-label="Repeat"
         >
           <RepeatIcon className="text-sm" />
@@ -264,15 +225,24 @@ export function CompactBayanPlayer({
             const nextIdx = (rates.indexOf(player.playbackRate) + 1) % rates.length;
             player.setPlaybackRate?.(rates[nextIdx]);
           }}
-          className="grid h-9 w-9 place-items-center rounded-full text-sand-300/50 hover:text-white transition-all active:scale-90 cursor-pointer"
+          className="grid h-9 w-9 place-items-center rounded-full bg-black/40 border border-white/10 text-sand-300/50 hover:bg-black/60 hover:text-white transition-all active:scale-90 cursor-pointer"
           aria-label="Speed"
         >
           <EqualizerIcon className="text-sm" />
         </button>
 
-        <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/15 px-1.5 py-0.5 rounded-full border border-emerald-500/30">
+        <button
+          type="button"
+          onClick={() => {
+            const rates = [1, 1.25, 1.5, 2];
+            const nextIdx = (rates.indexOf(player.playbackRate) + 1) % rates.length;
+            player.setPlaybackRate?.(rates[nextIdx]);
+          }}
+          aria-label="Playback Speed"
+          className="grid h-9 w-9 place-items-center rounded-full bg-black/40 border border-white/10 text-[10px] font-bold text-emerald-400 hover:bg-black/60 active:scale-90 transition-all cursor-pointer"
+        >
           {player.playbackRate}x
-        </span>
+        </button>
       </div>
     </div>
   );

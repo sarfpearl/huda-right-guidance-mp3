@@ -107,6 +107,11 @@ export function ImmersiveHomeClient({
       {/* Edge-to-Edge Dynamic Scene Background */}
       <ImmersiveBackground categorySlug={activeCategory.slug} />
 
+      {/* Bismillah Calligraphy — Top Center */}
+      <p className="pointer-events-none absolute top-[5.5rem] sm:top-5 left-1/2 -translate-x-1/2 z-30 w-full px-6 sm:px-24 text-center font-arabic text-2xl sm:text-3xl md:text-4xl font-extrabold text-amber-300 drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+        بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+      </p>
+
       {/* Floating Top Header with Top-Right Hamburger Menu */}
       <ImmersiveHeader onShuffle={handleShuffle}>
         <TopicPickerModal
@@ -123,12 +128,7 @@ export function ImmersiveHomeClient({
 
       {/* Main Canvas Center Viewport */}
       <main className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 text-center pointer-events-none">
-        <div className="pointer-events-auto flex flex-col items-center max-w-lg w-full px-6 py-6 rounded-3xl bg-black/40 backdrop-blur-xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
-          {/* Bismillah Calligraphy */}
-          <p className="font-arabic text-2xl sm:text-3xl md:text-4xl font-extrabold text-amber-300 drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] mb-2">
-            بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
-          </p>
-
+        <div className="pointer-events-auto flex flex-col items-center max-w-lg w-full px-6 py-6 sm:px-[2rem] rounded-[40px] bg-black/[0.08] backdrop-blur-[6px] border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
           {/* Topic / Scene Title */}
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
             {activeCategory.name}

@@ -23,6 +23,40 @@ interface TopicPickerModalProps {
   onShuffle?: () => void;
 }
 
+// Quran — 30 Juz (Para) with their traditional starting names
+const QURAN_JUZ: { num: number; name: string }[] = [
+  { num: 1, name: "Alif Lam Meem" },
+  { num: 2, name: "Sayaqul" },
+  { num: 3, name: "Tilkal Rusul" },
+  { num: 4, name: "Lan Tanaloo" },
+  { num: 5, name: "Wal Mohsanat" },
+  { num: 6, name: "La Yuhibbullah" },
+  { num: 7, name: "Wa Iza Sami'oo" },
+  { num: 8, name: "Wa Lau Annana" },
+  { num: 9, name: "Qalal Malaou" },
+  { num: 10, name: "Wa A'lamoo" },
+  { num: 11, name: "Yatazeroon" },
+  { num: 12, name: "Wa Mamin Da'abat" },
+  { num: 13, name: "Wa Ma Ubrioo" },
+  { num: 14, name: "Rubama" },
+  { num: 15, name: "Subhanallazi" },
+  { num: 16, name: "Qal Alam" },
+  { num: 17, name: "Aqtarabo" },
+  { num: 18, name: "Qadd Aflaha" },
+  { num: 19, name: "Wa Qalallazina" },
+  { num: 20, name: "A'man Khalaq" },
+  { num: 21, name: "Utlu Ma Oohia" },
+  { num: 22, name: "Wa Manyaqnut" },
+  { num: 23, name: "Wa Mali" },
+  { num: 24, name: "Faman Azlam" },
+  { num: 25, name: "Elahe Yuruddo" },
+  { num: 26, name: "Ha'a Meem" },
+  { num: 27, name: "Qala Fama Khatbukum" },
+  { num: 28, name: "Qadd Sami Allah" },
+  { num: 29, name: "Tabarakallazi" },
+  { num: 30, name: "Amma Yatasa'aloon" },
+];
+
 const SCENE_THUMBNAILS: Record<string, string> = {
   "iman-taqwa": "/images/scenes/iman-taqwa.jpg",
   "quran": "/images/scenes/quran.jpg",
@@ -73,6 +107,16 @@ export function TopicPickerModal({
     return (
       s.name.toLowerCase().includes(q) ||
       s.bio.toLowerCase().includes(q)
+    );
+  });
+
+  const filteredJuz = QURAN_JUZ.filter((j) => {
+    if (!q) return true;
+    return (
+      j.name.toLowerCase().includes(q) ||
+      String(j.num).includes(q) ||
+      `juz ${j.num}`.includes(q) ||
+      `para ${j.num}`.includes(q)
     );
   });
 
@@ -161,7 +205,7 @@ export function TopicPickerModal({
                       : "text-sand-200/60 hover:text-white"
                   )}
                 >
-                  Categories
+                  Bayan
                 </button>
 
                 <button
@@ -174,7 +218,7 @@ export function TopicPickerModal({
                       : "text-sand-200/60 hover:text-white"
                   )}
                 >
-                  Speakers
+                  Quran
                 </button>
 
                 <button
@@ -187,7 +231,7 @@ export function TopicPickerModal({
                       : "text-sand-200/60 hover:text-white"
                   )}
                 >
-                  Explore
+                  Surah
                 </button>
               </div>
 
@@ -277,33 +321,30 @@ export function TopicPickerModal({
                     );
                   })}
 
-                {/* 2. SPEAKERS TAB */}
+                {/* 2. QURAN TAB — Juz 1 to 30 */}
                 {activeTab === "speakers" &&
-                  filteredSpeakers.map((s) => (
+                  filteredJuz.map((j) => (
                     <button
-                      key={s.id}
+                      key={j.num}
                       type="button"
-                      onClick={() => {
-                        if (onSelectSpeaker) onSelectSpeaker(s);
-                        setIsOpen(false);
-                      }}
+                      onClick={() => setIsOpen(false)}
                       className="group flex w-full items-center gap-3 rounded-2xl bg-white/5 border border-white/5 p-3 text-left transition-all hover:bg-white/10 hover:border-emerald-500/30"
                     >
                       <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-emerald-900/60 text-emerald-300 font-bold text-sm border border-emerald-500/30">
-                        {s.name.substring(0, 2).toUpperCase()}
+                        {j.num}
                       </div>
 
                       <div className="min-w-0 flex-1">
                         <h4 className="truncate text-sm font-bold text-white">
-                          {s.name}
+                          {j.name}
                         </h4>
                         <p className="line-clamp-1 text-xs text-sand-200/60 mt-0.5">
-                          {s.bio || "Islamic Reminders & Guidance"}
+                          Juz {j.num} of 30
                         </p>
                       </div>
 
                       <span className="shrink-0 rounded-full bg-emerald-500/20 px-2.5 py-1 text-[10px] font-bold text-emerald-300">
-                        {s.bayanCount ?? 0} Bayan
+                        Para {j.num}
                       </span>
                     </button>
                   ))}
