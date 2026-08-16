@@ -438,7 +438,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
 
       // ── SOURCE PRIORITY 4: DEMO FALLBACK ────────────────────────────────
       console.log("[Huda Audio] Audio source: demo fallback");
-      const fallbackUrl = "https://download.quranicaudio.com/quran/mishaari_raashid_al_afasy/001.mp3";
+      const fallbackUrl = "https://download.quranicaudio.com/qdc/mishari_al_afasy/murattal/1.mp3";
       activeSourceRef.current = "local";
 
       const el = audioRef.current;
@@ -663,6 +663,9 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
   const onError = useCallback(() => {
     setIsPlaying(false);
     setIsLoading(false);
+    if (activeSourceRef.current === "local") {
+      setError("Couldn't load this audio. Please try another.");
+    }
   }, []);
 
   const value = useMemo<AudioPlayerApi>(
@@ -743,6 +746,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         onPlaying={() => {
           setIsPlaying(true);
           setIsLoading(false);
+          setError(null);
         }}
         onWaiting={() => setIsLoading(true)}
         onTimeUpdate={onTimeUpdate}

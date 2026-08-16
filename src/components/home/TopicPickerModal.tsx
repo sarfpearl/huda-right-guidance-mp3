@@ -9,6 +9,8 @@ import type { Speaker } from "@/types/speaker";
 import type { BayanWithRelations } from "@/types/bayan";
 import { CategoryIcon, CloseIcon, CompassIcon, MenuIcon, PlayIcon, SearchIcon, ShuffleIcon } from "@/components/ui/Icon";
 import { formatClock, cn } from "@/lib/utils";
+import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
+import { QURAN_JUZ, QURAN_TRACKS, QURAN_SURAHS, SURAH_TRACKS } from "@/lib/data/quran";
 
 type ModalTab = "categories" | "speakers" | "explore";
 
@@ -22,40 +24,6 @@ interface TopicPickerModalProps {
   onSelectBayan?: (bayan: BayanWithRelations) => void;
   onShuffle?: () => void;
 }
-
-// Quran — 30 Juz (Para) with their traditional starting names
-const QURAN_JUZ: { num: number; name: string }[] = [
-  { num: 1, name: "Alif Lam Meem" },
-  { num: 2, name: "Sayaqul" },
-  { num: 3, name: "Tilkal Rusul" },
-  { num: 4, name: "Lan Tanaloo" },
-  { num: 5, name: "Wal Mohsanat" },
-  { num: 6, name: "La Yuhibbullah" },
-  { num: 7, name: "Wa Iza Sami'oo" },
-  { num: 8, name: "Wa Lau Annana" },
-  { num: 9, name: "Qalal Malaou" },
-  { num: 10, name: "Wa A'lamoo" },
-  { num: 11, name: "Yatazeroon" },
-  { num: 12, name: "Wa Mamin Da'abat" },
-  { num: 13, name: "Wa Ma Ubrioo" },
-  { num: 14, name: "Rubama" },
-  { num: 15, name: "Subhanallazi" },
-  { num: 16, name: "Qal Alam" },
-  { num: 17, name: "Aqtarabo" },
-  { num: 18, name: "Qadd Aflaha" },
-  { num: 19, name: "Wa Qalallazina" },
-  { num: 20, name: "A'man Khalaq" },
-  { num: 21, name: "Utlu Ma Oohia" },
-  { num: 22, name: "Wa Manyaqnut" },
-  { num: 23, name: "Wa Mali" },
-  { num: 24, name: "Faman Azlam" },
-  { num: 25, name: "Elahe Yuruddo" },
-  { num: 26, name: "Ha'a Meem" },
-  { num: 27, name: "Qala Fama Khatbukum" },
-  { num: 28, name: "Qadd Sami Allah" },
-  { num: 29, name: "Tabarakallazi" },
-  { num: 30, name: "Amma Yatasa'aloon" },
-];
 
 const SCENE_THUMBNAILS: Record<string, string> = {
   "iman-taqwa": "/images/scenes/iman-taqwa.jpg",
@@ -85,6 +53,7 @@ export function TopicPickerModal({
   onSelectBayan,
   onShuffle,
 }: TopicPickerModalProps) {
+  const player = useAudioPlayer();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<ModalTab>("categories");
   const [searchQuery, setSearchQuery] = useState("");
@@ -113,10 +82,10 @@ export function TopicPickerModal({
   const filteredJuz = QURAN_JUZ.filter((j) => {
     if (!q) return true;
     return (
-      j.name.toLowerCase().includes(q) ||
-      String(j.num).includes(q) ||
-      `juz ${j.num}`.includes(q) ||
-      `para ${j.num}`.includes(q)
+      j.title.toLowerCase().includes(q) ||
+      String(j.id).includes(q) ||
+      `juz ${j.id}`.includes(q) ||
+      `para ${j.id}`.includes(q)
     );
   });
 
@@ -126,6 +95,15 @@ export function TopicPickerModal({
       b.title.toLowerCase().includes(q) ||
       b.speaker.name.toLowerCase().includes(q) ||
       b.category.name.toLowerCase().includes(q)
+    );
+  });
+
+  const filteredSurah = QURAN_SURAHS.filter((s) => {
+    if (!q) return true;
+    return (
+      s.name.toLowerCase().includes(q) ||
+      s.arabicName.includes(searchQuery.trim()) ||
+      String(s.number).includes(q)
     );
   });
 
@@ -240,7 +218,13 @@ export function TopicPickerModal({
                 <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sand-200/50 text-base pointer-events-none" />
                 <input
                   type="text"
-                  placeholder={`Search ${activeTab}...`}
+                  placeholder={
+                    activeTab === "speakers"
+                      ? "Search Juz..."
+                      : activeTab === "explore"
+                      ? "Search Surah..."
+                      : `Search ${activeTab}...`
+                  }
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full rounded-2xl bg-white/5 border border-white/10 pl-10 pr-4 py-2.5 text-xs text-white placeholder:text-sand-200/40 focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400 transition-all"
@@ -323,62 +307,119 @@ export function TopicPickerModal({
 
                 {/* 2. QURAN TAB — Juz 1 to 30 */}
                 {activeTab === "speakers" &&
-                  filteredJuz.map((j) => (
-                    <button
-                      key={j.num}
-                      type="button"
-                      onClick={() => setIsOpen(false)}
-                      className="group flex w-full items-center gap-3 rounded-2xl bg-white/5 border border-white/5 p-3 text-left transition-all hover:bg-white/10 hover:border-emerald-500/30"
-                    >
-                      <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-emerald-900/60 text-emerald-300 font-bold text-sm border border-emerald-500/30">
-                        {j.num}
-                      </div>
+                  filteredJuz.map((j) => {
+                    const isActive = player.current?.id === `quran-juz-${j.id}`;
+                    return (
+                      <button
+                        key={j.id}
+                        type="button"
+                        aria-current={isActive ? "true" : undefined}
+                        onClick={() => {
+                          player.playBayan(QURAN_TRACKS[j.id - 1], QURAN_TRACKS);
+                          setIsOpen(false);
+                        }}
+                        className={cn(
+                          "group flex w-full items-center gap-3 rounded-2xl border p-3 text-left transition-all",
+                          isActive
+                            ? "bg-emerald-950/80 border-emerald-400/90 text-white shadow-[0_0_24px_rgba(52,211,153,0.25)]"
+                            : "bg-white/5 border-white/5 hover:bg-white/10 hover:border-emerald-500/30"
+                        )}
+                      >
+                        <div className={cn(
+                          "grid h-11 w-11 shrink-0 place-items-center rounded-full font-bold text-sm border",
+                          isActive
+                            ? "bg-emerald-500 text-slate-950 border-emerald-300"
+                            : "bg-emerald-900/60 text-emerald-300 border-emerald-500/30"
+                        )}>
+                          {isActive && player.isPlaying ? (
+                            <span className="flex items-end gap-0.5" aria-label="Playing">
+                              <span className="h-3 w-0.5 animate-[equalizer_0.6s_ease-in-out_infinite] bg-slate-950" />
+                              <span className="h-4 w-0.5 animate-[equalizer_0.8s_ease-in-out_infinite] bg-slate-950" />
+                              <span className="h-2.5 w-0.5 animate-[equalizer_0.5s_ease-in-out_infinite] bg-slate-950" />
+                            </span>
+                          ) : (
+                            j.id
+                          )}
+                        </div>
 
-                      <div className="min-w-0 flex-1">
-                        <h4 className="truncate text-sm font-bold text-white">
-                          {j.name}
-                        </h4>
-                        <p className="line-clamp-1 text-xs text-sand-200/60 mt-0.5">
-                          Juz {j.num} of 30
-                        </p>
-                      </div>
+                        <div className="min-w-0 flex-1">
+                          <h4 className="truncate text-sm font-bold text-white">
+                            {j.title}
+                          </h4>
+                          <p className="line-clamp-1 text-xs text-sand-200/60 mt-0.5">
+                            {j.subtitle}
+                          </p>
+                        </div>
 
-                      <span className="shrink-0 rounded-full bg-emerald-500/20 px-2.5 py-1 text-[10px] font-bold text-emerald-300">
-                        Para {j.num}
-                      </span>
-                    </button>
-                  ))}
+                        <span className={cn(
+                          "shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold",
+                          isActive ? "bg-emerald-400 text-slate-950" : "bg-emerald-500/20 text-emerald-300"
+                        )}>
+                          {j.label}
+                        </span>
+                      </button>
+                    );
+                  })}
 
-                {/* 3. EXPLORE TAB */}
+                {/* 3. SURAH TAB — all 114 Surahs */}
                 {activeTab === "explore" &&
-                  filteredBayan.map((b) => (
-                    <button
-                      key={b.id}
-                      type="button"
-                      onClick={() => {
-                        if (onSelectBayan) onSelectBayan(b);
-                        setIsOpen(false);
-                      }}
-                      className="group flex w-full items-center gap-3 rounded-2xl bg-white/5 border border-white/5 p-2.5 text-left transition-all hover:bg-white/10 hover:border-emerald-500/30"
-                    >
-                      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-600/80 text-white text-sm shadow-sm">
-                        <PlayIcon className="ml-0.5" />
-                      </div>
+                  filteredSurah.map((s) => {
+                    const isActive = player.current?.id === `quran-surah-${s.number}`;
+                    return (
+                      <button
+                        key={s.number}
+                        type="button"
+                        aria-current={isActive ? "true" : undefined}
+                        onClick={() => {
+                          player.playBayan(SURAH_TRACKS[s.number - 1], SURAH_TRACKS);
+                          setIsOpen(false);
+                        }}
+                        className={cn(
+                          "group flex w-full items-center gap-3 rounded-2xl border p-3 text-left transition-all",
+                          isActive
+                            ? "bg-emerald-950/80 border-emerald-400/90 text-white shadow-[0_0_24px_rgba(52,211,153,0.25)]"
+                            : "bg-white/5 border-white/5 hover:bg-white/10 hover:border-emerald-500/30"
+                        )}
+                      >
+                        <div className={cn(
+                          "grid h-11 w-11 shrink-0 place-items-center rounded-full font-bold text-sm border",
+                          isActive
+                            ? "bg-emerald-500 text-slate-950 border-emerald-300"
+                            : "bg-emerald-900/60 text-emerald-300 border-emerald-500/30"
+                        )}>
+                          {isActive && player.isPlaying ? (
+                            <span className="flex items-end gap-0.5" aria-label="Playing">
+                              <span className="h-3 w-0.5 animate-[equalizer_0.6s_ease-in-out_infinite] bg-slate-950" />
+                              <span className="h-4 w-0.5 animate-[equalizer_0.8s_ease-in-out_infinite] bg-slate-950" />
+                              <span className="h-2.5 w-0.5 animate-[equalizer_0.5s_ease-in-out_infinite] bg-slate-950" />
+                            </span>
+                          ) : (
+                            s.number
+                          )}
+                        </div>
 
-                      <div className="min-w-0 flex-1">
-                        <h4 className="truncate text-xs md:text-sm font-bold text-white">
-                          {b.title}
-                        </h4>
-                        <p className="truncate text-[11px] text-emerald-300/80 mt-0.5">
-                          {b.speaker.name} · {b.category.name}
-                        </p>
-                      </div>
+                        <div className="min-w-0 flex-1">
+                          <h4 className="truncate text-sm font-bold text-white">
+                            {s.number} — {s.name}
+                          </h4>
+                          <p className="line-clamp-1 text-xs text-sand-200/60 mt-0.5">
+                            {s.verses} Verses · {s.type}
+                          </p>
+                        </div>
 
-                      <span className="shrink-0 font-mono text-[10px] text-sand-200/50">
-                        {formatClock(b.durationSeconds)}
-                      </span>
-                    </button>
-                  ))}
+                        <span
+                          lang="ar"
+                          dir="rtl"
+                          className={cn(
+                            "shrink-0 font-arabic text-base font-bold",
+                            isActive ? "text-emerald-300" : "text-sand-200/70"
+                          )}
+                        >
+                          {s.arabicName}
+                        </span>
+                      </button>
+                    );
+                  })}
               </div>
             </motion.div>
           </>

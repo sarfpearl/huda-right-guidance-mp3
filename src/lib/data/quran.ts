@@ -1,0 +1,394 @@
+import type { BayanWithRelations } from "@/types/bayan";
+import type { Category } from "@/types/category";
+import type { Speaker } from "@/types/speaker";
+
+/*
+ * ─────────────────────────────────────────────────────────────────────────
+ *  QURAN DATA LAYER
+ *  The 30 Juz (Para) of the Holy Qur'an, mapped to playable tracks that flow
+ *  through the EXISTING global audio player (AudioPlayerContext) as `local`
+ *  HTML5 audio. No separate Quran player — each Juz becomes a
+ *  `BayanWithRelations` track so queue / next / previous / auto-advance /
+ *  persistence all reuse the existing engine.
+ *
+ *  Audio provider: Internet Archive — one complete MP3 per Juz/Para
+ *  (Shaykh Maher Al-Muaiqly). 30 files, "Para 01.mp3" … "Para 30.mp3",
+ *  so each Juz is exactly one full recitation (1 audio = 1 Juz).
+ * ─────────────────────────────────────────────────────────────────────────
+ */
+
+// Internet Archive CDN — full per-Juz recitation by Maher Al-Muaiqly.
+// Files are named "Para NN.mp3" (2-digit, 1–30); space encoded as %20.
+const RECITER_BASE =
+  "https://archive.org/download/quran-juz-audio-mp3";
+
+const TRACK_ID_PREFIX = "quran-juz-";
+
+/** Public shape consumed by the Quran picker UI. */
+export interface QuranJuz {
+  /** Juz number, 1–30 (also used as list key). */
+  id: number;
+  /** Traditional starting name, e.g. "Alif Lam Meem". */
+  title: string;
+  /** Contextual subtitle, e.g. "Juz 1 of 30". */
+  subtitle: string;
+  /** Badge label, e.g. "Para 1". */
+  label: string;
+  /** Direct MP3 URL (kept here, never hard-coded in UI components). */
+  audioUrl: string;
+}
+
+/** Full-Juz MP3 URL — one complete recitation per Juz (1–30). */
+const audioForJuz = (juz: number) =>
+  `${RECITER_BASE}/Para%20${String(juz).padStart(2, "0")}.mp3`;
+
+/** Traditional starting name for each of the 30 Juz. */
+const JUZ_TITLES: string[] = [
+  "Alif Lam Meem",
+  "Sayaqul",
+  "Tilkal Rusul",
+  "Lan Tanaloo",
+  "Wal Mohsanat",
+  "La Yuhibbullah",
+  "Wa Iza Sami'oo",
+  "Wa Lau Annana",
+  "Qalal Malaou",
+  "Wa A'lamoo",
+  "Yatazeroon",
+  "Wa Mamin Da'abat",
+  "Wa Ma Ubrioo",
+  "Rubama",
+  "Subhanallazi",
+  "Qal Alam",
+  "Aqtarabo",
+  "Qadd Aflaha",
+  "Wa Qalallazina",
+  "A'man Khalaq",
+  "Utlu Ma Oohia",
+  "Wa Manyaqnut",
+  "Wa Mali",
+  "Faman Azlam",
+  "Elahe Yuruddo",
+  "Ha'a Meem",
+  "Qala Fama Khatbukum",
+  "Qadd Sami Allah",
+  "Tabarakallazi",
+  "Amma Yatasa'aloon",
+];
+
+/** The 30 Juz, ready for the picker — one full audio per Juz. */
+export const QURAN_JUZ: QuranJuz[] = JUZ_TITLES.map((title, i) => {
+  const num = i + 1;
+  return {
+    id: num,
+    title,
+    subtitle: `Juz ${num} of 30`,
+    label: `Para ${num}`,
+    audioUrl: audioForJuz(num),
+  };
+});
+
+// ── Synthetic relations so Juz tracks satisfy BayanWithRelations ────────────
+
+const QURAN_CATEGORY: Category = {
+  id: "quran-recitation",
+  name: "Quran",
+  nameTa: "குர்ஆன்",
+  slug: "quran-recitation",
+  description: "Holy Qur'an recitation by Juz",
+  icon: "book",
+  coverImageUrl: null,
+  sortOrder: 0,
+  isActive: true,
+  createdAt: "",
+};
+
+const QURAN_RECITER: Speaker = {
+  id: "reciter-maher-al-muaiqly",
+  name: "Maher Al-Muaiqly",
+  slug: "maher-al-muaiqly",
+  bio: "Holy Qur'an reciter",
+  profileImageUrl: null,
+  isActive: true,
+  createdAt: "",
+};
+
+/** Map a Juz to a track the existing global player understands. */
+export function quranJuzToTrack(juz: QuranJuz): BayanWithRelations {
+  return {
+    id: `${TRACK_ID_PREFIX}${juz.id}`,
+    title: juz.title,
+    slug: `${TRACK_ID_PREFIX}${juz.id}`,
+    description: juz.subtitle,
+    speakerId: QURAN_RECITER.id,
+    categoryId: QURAN_CATEGORY.id,
+    language: "Arabic",
+    coverImageUrl: null,
+    audioSource: "local",
+    audioUrl: juz.audioUrl,
+    youtubeVideoId: null,
+    youtubePlaylistId: null,
+    durationSeconds: 900,
+    publishedAt: null,
+    isFeatured: false,
+    isPublished: true,
+    playCount: 0,
+    createdAt: "",
+    updatedAt: "",
+    speaker: QURAN_RECITER,
+    category: QURAN_CATEGORY,
+  };
+}
+
+/** All 30 Juz as a playable ordered queue (used as the player context list). */
+export const QURAN_TRACKS: BayanWithRelations[] = QURAN_JUZ.map(quranJuzToTrack);
+
+/** True when a player track represents a Quran Juz (vs a Bayan). */
+export function isQuranTrackId(id: string | undefined | null): boolean {
+  return typeof id === "string" && id.startsWith(TRACK_ID_PREFIX);
+}
+
+/** Resolve the Juz metadata for a given player-track id (or undefined). */
+export function getQuranJuzByTrackId(id: string): QuranJuz | undefined {
+  if (!isQuranTrackId(id)) return undefined;
+  const num = Number(id.slice(TRACK_ID_PREFIX.length));
+  return QURAN_JUZ.find((j) => j.id === num);
+}
+
+/*
+ * ─────────────────────────────────────────────────────────────────────────
+ *  SURAHS — all 114 chapters, one full MP3 each.
+ *  Reciter: Abdur Rahman As-Sudais.
+ *
+ *  NOTE on source: Quran Central was the requested source, but its CDN
+ *  (podcasts.qurancentral.com) returns 403 for cross-origin requests and
+ *  sends no CORS header, so its direct MP3s are NOT browser-playable from
+ *  our origin. Per the spec's fallback ("if Quran Central does not expose
+ *  browser-playable direct MP3 URLs, use the appropriate supported source"),
+ *  we serve the SAME Sudais recitation from mp3quran.net, which is
+ *  CORS-enabled (Access-Control-Allow-Origin: *) and browser-playable.
+ *  Files: server11.mp3quran.net/sds/NNN.mp3 (3-digit surah number).
+ * ─────────────────────────────────────────────────────────────────────────
+ */
+
+const SURAH_TRACK_ID_PREFIX = "quran-surah-";
+const SUDAIS_BASE = "https://server11.mp3quran.net/sds";
+
+const surahAudioUrl = (n: number) =>
+  `${SUDAIS_BASE}/${String(n).padStart(3, "0")}.mp3`;
+
+export type RevelationType = "Meccan" | "Medinan";
+
+export interface QuranSurah {
+  number: number;
+  name: string;
+  arabicName: string;
+  verses: number;
+  type: RevelationType;
+  /** Direct MP3 URL (kept here, never hard-coded in UI components). */
+  audioUrl: string;
+}
+
+// [name, arabicName, verses, revelationType]
+const SURAH_DEFS: [string, string, number, RevelationType][] = [
+  ["Al-Fatihah", "الفاتحة", 7, "Meccan"],
+  ["Al-Baqarah", "البقرة", 286, "Medinan"],
+  ["Aal-E-Imran", "آل عمران", 200, "Medinan"],
+  ["An-Nisa", "النساء", 176, "Medinan"],
+  ["Al-Ma'idah", "المائدة", 120, "Medinan"],
+  ["Al-An'am", "الأنعام", 165, "Meccan"],
+  ["Al-A'raf", "الأعراف", 206, "Meccan"],
+  ["Al-Anfal", "الأنفال", 75, "Medinan"],
+  ["At-Tawbah", "التوبة", 129, "Medinan"],
+  ["Yunus", "يونس", 109, "Meccan"],
+  ["Hud", "هود", 123, "Meccan"],
+  ["Yusuf", "يوسف", 111, "Meccan"],
+  ["Ar-Ra'd", "الرعد", 43, "Medinan"],
+  ["Ibrahim", "إبراهيم", 52, "Meccan"],
+  ["Al-Hijr", "الحجر", 99, "Meccan"],
+  ["An-Nahl", "النحل", 128, "Meccan"],
+  ["Al-Isra", "الإسراء", 111, "Meccan"],
+  ["Al-Kahf", "الكهف", 110, "Meccan"],
+  ["Maryam", "مريم", 98, "Meccan"],
+  ["Ta-Ha", "طه", 135, "Meccan"],
+  ["Al-Anbiya", "الأنبياء", 112, "Meccan"],
+  ["Al-Hajj", "الحج", 78, "Medinan"],
+  ["Al-Mu'minun", "المؤمنون", 118, "Meccan"],
+  ["An-Nur", "النور", 64, "Medinan"],
+  ["Al-Furqan", "الفرقان", 77, "Meccan"],
+  ["Ash-Shu'ara", "الشعراء", 227, "Meccan"],
+  ["An-Naml", "النمل", 93, "Meccan"],
+  ["Al-Qasas", "القصص", 88, "Meccan"],
+  ["Al-Ankabut", "العنكبوت", 69, "Meccan"],
+  ["Ar-Rum", "الروم", 60, "Meccan"],
+  ["Luqman", "لقمان", 34, "Meccan"],
+  ["As-Sajdah", "السجدة", 30, "Meccan"],
+  ["Al-Ahzab", "الأحزاب", 73, "Medinan"],
+  ["Saba", "سبأ", 54, "Meccan"],
+  ["Fatir", "فاطر", 45, "Meccan"],
+  ["Ya-Sin", "يس", 83, "Meccan"],
+  ["As-Saffat", "الصافات", 182, "Meccan"],
+  ["Sad", "ص", 88, "Meccan"],
+  ["Az-Zumar", "الزمر", 75, "Meccan"],
+  ["Ghafir", "غافر", 85, "Meccan"],
+  ["Fussilat", "فصلت", 54, "Meccan"],
+  ["Ash-Shura", "الشورى", 53, "Meccan"],
+  ["Az-Zukhruf", "الزخرف", 89, "Meccan"],
+  ["Ad-Dukhan", "الدخان", 59, "Meccan"],
+  ["Al-Jathiyah", "الجاثية", 37, "Meccan"],
+  ["Al-Ahqaf", "الأحقاف", 35, "Meccan"],
+  ["Muhammad", "محمد", 38, "Medinan"],
+  ["Al-Fath", "الفتح", 29, "Medinan"],
+  ["Al-Hujurat", "الحجرات", 18, "Medinan"],
+  ["Qaf", "ق", 45, "Meccan"],
+  ["Adh-Dhariyat", "الذاريات", 60, "Meccan"],
+  ["At-Tur", "الطور", 49, "Meccan"],
+  ["An-Najm", "النجم", 62, "Meccan"],
+  ["Al-Qamar", "القمر", 55, "Meccan"],
+  ["Ar-Rahman", "الرحمن", 78, "Medinan"],
+  ["Al-Waqi'ah", "الواقعة", 96, "Meccan"],
+  ["Al-Hadid", "الحديد", 29, "Medinan"],
+  ["Al-Mujadila", "المجادلة", 22, "Medinan"],
+  ["Al-Hashr", "الحشر", 24, "Medinan"],
+  ["Al-Mumtahanah", "الممتحنة", 13, "Medinan"],
+  ["As-Saff", "الصف", 14, "Medinan"],
+  ["Al-Jumu'ah", "الجمعة", 11, "Medinan"],
+  ["Al-Munafiqun", "المنافقون", 11, "Medinan"],
+  ["At-Taghabun", "التغابن", 18, "Medinan"],
+  ["At-Talaq", "الطلاق", 12, "Medinan"],
+  ["At-Tahrim", "التحريم", 12, "Medinan"],
+  ["Al-Mulk", "الملك", 30, "Meccan"],
+  ["Al-Qalam", "القلم", 52, "Meccan"],
+  ["Al-Haqqah", "الحاقة", 52, "Meccan"],
+  ["Al-Ma'arij", "المعارج", 44, "Meccan"],
+  ["Nuh", "نوح", 28, "Meccan"],
+  ["Al-Jinn", "الجن", 28, "Meccan"],
+  ["Al-Muzzammil", "المزمل", 20, "Meccan"],
+  ["Al-Muddaththir", "المدثر", 56, "Meccan"],
+  ["Al-Qiyamah", "القيامة", 40, "Meccan"],
+  ["Al-Insan", "الإنسان", 31, "Medinan"],
+  ["Al-Mursalat", "المرسلات", 50, "Meccan"],
+  ["An-Naba", "النبأ", 40, "Meccan"],
+  ["An-Nazi'at", "النازعات", 46, "Meccan"],
+  ["Abasa", "عبس", 42, "Meccan"],
+  ["At-Takwir", "التكوير", 29, "Meccan"],
+  ["Al-Infitar", "الإنفطار", 19, "Meccan"],
+  ["Al-Mutaffifin", "المطففين", 36, "Meccan"],
+  ["Al-Inshiqaq", "الإنشقاق", 25, "Meccan"],
+  ["Al-Buruj", "البروج", 22, "Meccan"],
+  ["At-Tariq", "الطارق", 17, "Meccan"],
+  ["Al-A'la", "الأعلى", 19, "Meccan"],
+  ["Al-Ghashiyah", "الغاشية", 26, "Meccan"],
+  ["Al-Fajr", "الفجر", 30, "Meccan"],
+  ["Al-Balad", "البلد", 20, "Meccan"],
+  ["Ash-Shams", "الشمس", 15, "Meccan"],
+  ["Al-Layl", "الليل", 21, "Meccan"],
+  ["Ad-Duha", "الضحى", 11, "Meccan"],
+  ["Ash-Sharh", "الشرح", 8, "Meccan"],
+  ["At-Tin", "التين", 8, "Meccan"],
+  ["Al-Alaq", "العلق", 19, "Meccan"],
+  ["Al-Qadr", "القدر", 5, "Meccan"],
+  ["Al-Bayyinah", "البينة", 8, "Medinan"],
+  ["Az-Zalzalah", "الزلزلة", 8, "Medinan"],
+  ["Al-Adiyat", "العاديات", 11, "Meccan"],
+  ["Al-Qari'ah", "القارعة", 11, "Meccan"],
+  ["At-Takathur", "التكاثر", 8, "Meccan"],
+  ["Al-Asr", "العصر", 3, "Meccan"],
+  ["Al-Humazah", "الهمزة", 9, "Meccan"],
+  ["Al-Fil", "الفيل", 5, "Meccan"],
+  ["Quraysh", "قريش", 4, "Meccan"],
+  ["Al-Ma'un", "الماعون", 7, "Meccan"],
+  ["Al-Kawthar", "الكوثر", 3, "Meccan"],
+  ["Al-Kafirun", "الكافرون", 6, "Meccan"],
+  ["An-Nasr", "النصر", 3, "Medinan"],
+  ["Al-Masad", "المسد", 5, "Meccan"],
+  ["Al-Ikhlas", "الإخلاص", 4, "Meccan"],
+  ["Al-Falaq", "الفلق", 5, "Meccan"],
+  ["An-Nas", "الناس", 6, "Meccan"],
+];
+
+/** All 114 Surahs, ready for the picker — one full audio per Surah. */
+export const QURAN_SURAHS: QuranSurah[] = SURAH_DEFS.map(
+  ([name, arabicName, verses, type], i) => ({
+    number: i + 1,
+    name,
+    arabicName,
+    verses,
+    type,
+    audioUrl: surahAudioUrl(i + 1),
+  })
+);
+
+const SUDAIS_RECITER: Speaker = {
+  id: "reciter-abdur-rahman-as-sudais",
+  name: "Abdur Rahman As-Sudais",
+  slug: "abdur-rahman-as-sudais",
+  bio: "Holy Qur'an reciter",
+  profileImageUrl: null,
+  isActive: true,
+  createdAt: "",
+};
+
+/** Map a Surah to a track the existing global player understands. */
+export function quranSurahToTrack(surah: QuranSurah): BayanWithRelations {
+  return {
+    id: `${SURAH_TRACK_ID_PREFIX}${surah.number}`,
+    title: surah.name,
+    slug: `${SURAH_TRACK_ID_PREFIX}${surah.number}`,
+    description: `Surah ${surah.number} • ${surah.verses} Verses`,
+    speakerId: SUDAIS_RECITER.id,
+    categoryId: QURAN_CATEGORY.id,
+    language: "Arabic",
+    coverImageUrl: null,
+    audioSource: "local",
+    audioUrl: surah.audioUrl,
+    youtubeVideoId: null,
+    youtubePlaylistId: null,
+    durationSeconds: 300,
+    publishedAt: null,
+    isFeatured: false,
+    isPublished: true,
+    playCount: 0,
+    createdAt: "",
+    updatedAt: "",
+    speaker: SUDAIS_RECITER,
+    category: QURAN_CATEGORY,
+  };
+}
+
+/** All 114 Surahs as a playable ordered queue (player context list). */
+export const SURAH_TRACKS: BayanWithRelations[] =
+  QURAN_SURAHS.map(quranSurahToTrack);
+
+/** True when a player track represents a Surah. */
+export function isSurahTrackId(id: string | undefined | null): boolean {
+  return typeof id === "string" && id.startsWith(SURAH_TRACK_ID_PREFIX);
+}
+
+/** Resolve the Surah metadata for a given player-track id (or undefined). */
+export function getSurahByTrackId(id: string): QuranSurah | undefined {
+  if (!isSurahTrackId(id)) return undefined;
+  const num = Number(id.slice(SURAH_TRACK_ID_PREFIX.length));
+  return QURAN_SURAHS.find((s) => s.number === num);
+}
+
+// ── Unified Quran (Juz + Surah) helpers for the player UI ───────────────────
+
+/** True when a track is any Quran content (Juz or Surah), not a Bayan. */
+export function isQuranTrack(id: string | undefined | null): boolean {
+  return isQuranTrackId(id) || isSurahTrackId(id);
+}
+
+/**
+ * Player subtitle line for Quran content:
+ *  - Juz   → "Para 1 • Juz 1 of 30"
+ *  - Surah → "Surah 1 • 7 Verses"
+ * Returns undefined for non-Quran tracks (Bayan).
+ */
+export function quranPlayerSubtitle(id: string): string | undefined {
+  const juz = getQuranJuzByTrackId(id);
+  if (juz) return `${juz.label} • ${juz.subtitle}`;
+  const surah = getSurahByTrackId(id);
+  if (surah) return `Surah ${surah.number} • ${surah.verses} Verses`;
+  return undefined;
+}

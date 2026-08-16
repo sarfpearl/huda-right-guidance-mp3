@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/Icon";
 import { youtubeWatchUrl } from "@/lib/youtube";
 import { cn } from "@/lib/utils";
+import { quranPlayerSubtitle } from "@/lib/data/quran";
 
 /*
  * The single, persistent player UI. Mounted once in the root layout (below
@@ -56,6 +57,9 @@ export function GlobalAudioPlayer() {
   if (!current) return null;
 
   const isYouTube = current.audioSource === "youtube";
+  const quranSubtitle = quranPlayerSubtitle(current.id);
+  const isQuran = Boolean(quranSubtitle);
+  const subtitleText = quranSubtitle ?? current.speaker.name;
 
   const Cover = ({ size }: { size: string }) => (
     <div className={cn("relative shrink-0 overflow-hidden rounded-lg", size)}>
@@ -131,7 +135,7 @@ export function GlobalAudioPlayer() {
                     {current.title}
                   </span>
                   <span className="block truncate text-xs text-muted">
-                    {current.speaker.name}
+                    {subtitleText}
                   </span>
                 </span>
               </button>
@@ -246,21 +250,35 @@ export function GlobalAudioPlayer() {
               </div>
 
               <div className="text-center">
-                <Link
-                  href={`/category/${current.category.slug}`}
-                  onClick={() => setExpanded(false)}
-                  className="text-xs font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-300"
-                >
-                  {current.category.name}
-                </Link>
-                <h2 className="mt-1 text-xl font-bold">{current.title}</h2>
-                <Link
-                  href={`/speaker/${current.speaker.slug}`}
-                  onClick={() => setExpanded(false)}
-                  className="text-sm text-muted"
-                >
-                  {current.speaker.name}
-                </Link>
+                {isQuran ? (
+                  <>
+                    <span className="text-xs font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-300">
+                      Quran
+                    </span>
+                    <h2 className="mt-1 text-xl font-bold">{current.title}</h2>
+                    <span className="text-sm text-muted">
+                      {quranSubtitle}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href={`/category/${current.category.slug}`}
+                      onClick={() => setExpanded(false)}
+                      className="text-xs font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-300"
+                    >
+                      {current.category.name}
+                    </Link>
+                    <h2 className="mt-1 text-xl font-bold">{current.title}</h2>
+                    <Link
+                      href={`/speaker/${current.speaker.slug}`}
+                      onClick={() => setExpanded(false)}
+                      className="text-sm text-muted"
+                    >
+                      {current.speaker.name}
+                    </Link>
+                  </>
+                )}
               </div>
 
               {isYouTube ? (

@@ -17,6 +17,7 @@ import {
   EqualizerIcon,
 } from "@/components/ui/Icon";
 import { formatClock } from "@/lib/utils";
+import { quranPlayerSubtitle } from "@/lib/data/quran";
 
 interface CompactBayanPlayerProps {
   bayan: BayanWithRelations;
@@ -33,6 +34,9 @@ export function CompactBayanPlayer({
   const isCurrentTrack = player.current?.id === bayan.id;
   const isPlaying = isCurrentTrack && player.isPlaying;
   const isLoading = isCurrentTrack && player.isLoading;
+  const errorMsg = isCurrentTrack ? player.error : null;
+  const quranSubtitle = quranPlayerSubtitle(bayan.id);
+  const isQuran = Boolean(quranSubtitle);
   const currentTime = isCurrentTrack ? player.currentTime : 0;
   const totalDuration = isCurrentTrack && player.duration > 0
     ? player.duration
@@ -94,17 +98,30 @@ export function CompactBayanPlayer({
         {/* Track Info (Title & Speaker) */}
         <div className="min-w-0 flex-1 flex flex-col justify-center">
           <span className="text-[10px] sm:text-xs font-semibold text-sand-300/50 uppercase tracking-widest">
-            Now Playing
+            {isQuran ? "Quran" : "Now Playing"}
           </span>
           <h3 className="truncate font-sans text-base sm:text-lg md:text-xl font-bold text-white tracking-tight mt-1">
             {bayan.title}
           </h3>
-          <p className="truncate text-xs sm:text-sm font-medium text-emerald-400 mt-0.5">
-            {bayan.speaker.name}
-          </p>
-          <span className="truncate text-[11px] font-medium text-sand-300/60 mt-1">
-            {bayan.category.name}
-          </span>
+          {isQuran ? (
+            <p className="truncate text-xs sm:text-sm font-medium text-emerald-400 mt-0.5">
+              {quranSubtitle}
+            </p>
+          ) : (
+            <>
+              <p className="truncate text-xs sm:text-sm font-medium text-emerald-400 mt-0.5">
+                {bayan.speaker.name}
+              </p>
+              <span className="truncate text-[11px] font-medium text-sand-300/60 mt-1">
+                {bayan.category.name}
+              </span>
+            </>
+          )}
+          {errorMsg && (
+            <span className="truncate text-[11px] font-medium text-red-400 mt-1" role="alert">
+              {errorMsg}
+            </span>
+          )}
         </div>
 
         {/* Right Vertical Action Stack */}

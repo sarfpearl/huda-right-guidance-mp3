@@ -10,6 +10,7 @@ import { ImmersiveHeader } from "./ImmersiveHeader";
 import { CompactBayanPlayer } from "./CompactBayanPlayer";
 import { TopicPickerModal } from "./TopicPickerModal";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
+import { isQuranTrack } from "@/lib/data/quran";
 
 interface ImmersiveHomeClientProps {
   categories: Category[];
@@ -58,6 +59,11 @@ export function ImmersiveHomeClient({
 
   // Selected Bayan for the active category (or player's current track if playing within category)
   const activeBayan = useMemo(() => {
+    // Quran recitation (Juz or Surah) always drives the card while it is the
+    // active track (covers next/previous and auto-advance).
+    if (player.current && isQuranTrack(player.current.id)) {
+      return player.current;
+    }
     if (overrideBayan) return overrideBayan;
     if (player.current && player.current.categoryId === activeCategory.id) {
       return player.current;
