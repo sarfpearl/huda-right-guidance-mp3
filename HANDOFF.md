@@ -1,9 +1,9 @@
 # 🕌 Huda Bayan — Project Handoff
 
 > **For:** Claude (or any AI assistant continuing this project)
-> **Date:** 2026-08-14
+> **Date:** 2026-08-16
 > **Project Path:** `/Users/pearl-9744/Claude/Projects/Huda Bayan`
-> **Dev Server:** `npm run dev` → [http://localhost:3000](http://localhost:3000)
+> **Dev Server:** `npm run dev` → [http://localhost:3000](http://localhost:3000) (config in `.claude/launch.json`)
 
 ---
 
@@ -48,8 +48,8 @@ Huda Bayan/                      ← root folder
 │   │   │   ├── ImmersiveHomeClient.tsx   ← Main home page orchestrator
 │   │   │   ├── ImmersiveBackground.tsx  ← Full-screen scene backgrounds
 │   │   │   ├── ImmersiveHeader.tsx      ← Floating header
-│   │   │   ├── CompactBayanPlayer.tsx   ← Bottom glass player card
-│   │   │   └── TopicPickerModal.tsx     ← Right slide-over panel
+│   │   │   ├── CompactBayanPlayer.tsx   ← Bottom glass player card (circular cover, clickable speed badge)
+│   │   │   └── TopicPickerModal.tsx     ← Right slide-over panel (Categories / Quran Juz / Explore tabs)
 │   │   ├── navigation/
 │   │   │   ├── Header.tsx
 │   │   │   ├── MobileBottomNav.tsx
@@ -98,10 +98,17 @@ Huda Bayan/                      ← root folder
 ```
 z-50  → ImmersiveHeader (top bar + menu)
 z-40  → Bottom player div
-z-20  → Center Bismillah card
+z-30  → Bismillah calligraphy (top-center, floating over scene)
+z-20  → Center topic card (category name + Tamil + tagline)
 z-10  → ImmersiveHomeClient root
 z-0   → ImmersiveBackground (scene image)
 ```
+
+### Glass Card Recipe (shared by player / hero / time widget)
+`bg-black/[0.08]` tint · `backdrop-blur-[6px]` · `border border-white/15` ·
+`shadow-[0_20px_50px_rgba(0,0,0,0.8)]` · `rounded-[40px]` (bounded — never
+`rounded-full`, which turns multi-row cards into ellipses). Cards are
+responsive: wider width + smaller radius/padding on mobile (`sm:` bumps up).
 
 ---
 
@@ -180,10 +187,11 @@ YOUTUBE_API_KEY=
 ## 🐛 Known Issues & Pending Work
 
 ### 🔴 Ongoing Bug
-- **Home page shows only background, no UI** — caused by old Next.js server processes occupying port 3000. Fix: kill all node processes on ports 3000–3004, then run `npm run dev` fresh, then hard-refresh browser (`Cmd+Shift+R`). The z-index stacking fix is already committed (`7e15b6b`).
+- **Home page shows only background / Internal Server Error / port 3000 in use** — caused by stale/old Next.js server processes occupying port 3000, or a mixed `.next` cache (running `next build` then `npm run dev` corrupts the dev cache → `__webpack_modules__[moduleId] is not a function`). Fix: `lsof -ti:3000 | xargs kill -9`, then `rm -rf .next`, then `npm run dev` fresh, then hard-refresh (`Cmd+Shift+R`). The z-index stacking fix is already committed (`7e15b6b`).
 
 ### 🟡 Needs Implementation
 - [ ] **Supabase backend** — implement stubs in `src/lib/supabase/queries.ts`
+- [ ] **Quran Juz audio** — the Quran tab lists Juz 1–30 (`QURAN_JUZ` in `TopicPickerModal.tsx`), but items only close the modal; wire each Juz to real recitation audio/pages
 - [ ] **Real bayan/speaker data** — replace seed placeholders with real Tamil Islamic Bayan content
 - [ ] **Per-category YouTube playlists** — all 16 categories currently share the same demo playlist `PLFRt54vRoHJs`; each needs a real Tamil Bayan playlist ID in `seed.ts`
 - [ ] **Arabic font** — `font-arabic` class references `var(--font-arabic)` which is never set; add Amiri or Noto Naskh Arabic via `next/font/google` in `layout.tsx`
@@ -194,8 +202,10 @@ YOUTUBE_API_KEY=
 - Immersive home with 15 animated scene backgrounds
 - Category switching with smooth crossfade transitions
 - YouTube IFrame audio playback
-- Glassmorphic bottom player card
-- Right slide-over topic picker (categories/speakers/explore tabs)
+- Unified iOS-style glass cards (player / hero / time widget), responsive
+- Bismillah calligraphy floats top-center; topic card shows category + Tamil + tagline
+- Player: circular cover art, dark-glass controls, clickable speed badge, YT playback-rate sync
+- Right slide-over topic picker (Categories / Quran Juz 1–30 / Explore tabs)
 - Live clock + geolocation widget (top-left)
 - Mobile responsive + PWA manifest
 - SEO metadata + dynamic OG images per bayan
@@ -224,6 +234,8 @@ npm run typecheck
 ## 📝 Git History
 
 ```
+abbd492  feat: glass UI refinements, Quran juz list, and playback-rate fix
+122c7ee  docs: add HANDOFF.md for project continuation
 7e15b6b  fix: resolve UI elements not visible (z-index stacking context)
 c454370  refactor: rename project to huda-bayan
 bdbd7b8  Refine CompactBayanPlayer UI layout and controls
