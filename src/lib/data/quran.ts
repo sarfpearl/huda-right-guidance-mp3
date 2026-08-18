@@ -18,9 +18,14 @@ import type { Speaker } from "@/types/speaker";
  */
 
 // Internet Archive CDN — full per-Juz recitation by Maher Al-Muaiqly.
+// NOTE: we point at the item's DIRECT data node, not the archive.org
+// "/download/" path. The /download/ redirect is slow (7–14 s) and often
+// times out in-browser, which broke audio loading; the direct node serves
+// the file in ~1 s with proper CORS + range support. If archive.org ever
+// migrates this item to a different node, update this single constant.
 // Files are named "Para NN.mp3" (2-digit, 1–30); space encoded as %20.
 const RECITER_BASE =
-  "https://archive.org/download/quran-juz-audio-mp3";
+  "https://dn720304.ca.archive.org/0/items/quran-juz-audio-mp3";
 
 const TRACK_ID_PREFIX = "quran-juz-";
 
@@ -390,5 +395,19 @@ export function quranPlayerSubtitle(id: string): string | undefined {
   if (juz) return `${juz.label} • ${juz.subtitle}`;
   const surah = getSurahByTrackId(id);
   if (surah) return `Surah ${surah.number} • ${surah.verses} Verses`;
+  return undefined;
+}
+
+/**
+ * Category / content-type line for the player card:
+ *  - Juz   → "Quran • Juz 1"
+ *  - Surah → "Quran • Surah 1"
+ * Returns undefined for non-Quran tracks (Bayan).
+ */
+export function quranContentLabel(id: string): string | undefined {
+  const juz = getQuranJuzByTrackId(id);
+  if (juz) return `Quran • Juz ${juz.id}`;
+  const surah = getSurahByTrackId(id);
+  if (surah) return `Quran • Surah ${surah.number}`;
   return undefined;
 }

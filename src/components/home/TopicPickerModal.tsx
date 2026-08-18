@@ -55,7 +55,7 @@ export function TopicPickerModal({
 }: TopicPickerModalProps) {
   const player = useAudioPlayer();
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<ModalTab>("categories");
+  const [activeTab, setActiveTab] = useState<ModalTab>("explore");
   const [searchQuery, setSearchQuery] = useState("");
 
   const activeCategory = categories.find((c) => c.slug === activeCategorySlug);
@@ -175,15 +175,15 @@ export function TopicPickerModal({
               <div className="flex items-center gap-1 rounded-2xl bg-white/5 p-1 border border-white/10 my-3">
                 <button
                   type="button"
-                  onClick={() => setActiveTab("categories")}
+                  onClick={() => setActiveTab("explore")}
                   className={cn(
                     "flex-1 rounded-xl py-1.5 text-center text-xs font-bold transition-all",
-                    activeTab === "categories"
+                    activeTab === "explore"
                       ? "bg-emerald-600 text-white shadow-md"
                       : "text-sand-200/60 hover:text-white"
                   )}
                 >
-                  Bayan
+                  Surah
                 </button>
 
                 <button
@@ -201,15 +201,15 @@ export function TopicPickerModal({
 
                 <button
                   type="button"
-                  onClick={() => setActiveTab("explore")}
+                  onClick={() => setActiveTab("categories")}
                   className={cn(
                     "flex-1 rounded-xl py-1.5 text-center text-xs font-bold transition-all",
-                    activeTab === "explore"
+                    activeTab === "categories"
                       ? "bg-emerald-600 text-white shadow-md"
                       : "text-sand-200/60 hover:text-white"
                   )}
                 >
-                  Surah
+                  Bayan
                 </button>
               </div>
 

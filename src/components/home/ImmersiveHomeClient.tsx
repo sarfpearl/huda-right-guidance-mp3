@@ -132,28 +132,6 @@ export function ImmersiveHomeClient({
         />
       </ImmersiveHeader>
 
-      {/* Main Canvas Center Viewport */}
-      <main className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 text-center pointer-events-none">
-        <div className="pointer-events-auto flex flex-col items-center max-w-lg w-full px-6 py-6 sm:px-[2rem] rounded-[40px] bg-black/[0.08] backdrop-blur-[6px] border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
-          {/* Topic / Scene Title */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
-            {activeCategory.name}
-          </h1>
-
-          {/* Tamil Name / Subtitle */}
-          {activeCategory.nameTa && (
-            <span className="mt-1.5 text-base sm:text-lg font-bold text-emerald-300 tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
-              {activeCategory.nameTa}
-            </span>
-          )}
-
-          {/* Contextual Description */}
-          <p className="mt-2.5 max-w-md text-xs sm:text-sm text-sand-100/90 font-medium leading-relaxed">
-            {activeCategory.description || "Strengthen your connection with Allah."}
-          </p>
-        </div>
-      </main>
-
       {/* Bottom Floating Player */}
       <div className="absolute bottom-4 sm:bottom-6 inset-x-0 z-40 flex flex-col items-center px-4 pointer-events-none">
         <div className="pointer-events-auto">

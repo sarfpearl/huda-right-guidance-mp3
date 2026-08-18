@@ -347,21 +347,33 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         if (!el) return;
 
         setIsLoading(true);
+        el.preload = "auto";
         el.src = localAudioUrl;
         el.load();
 
         const saved = readPositions()[bayan.id] ?? 0;
         const startAt =
           saved > 0 && saved < bayan.durationSeconds - 5 ? saved : 0;
+        setCurrentTime(startAt);
 
+        // Start playback ASAP — don't wait for full metadata. The browser
+        // begins buffering immediately and plays as soon as it can, which
+        // noticeably cuts the startup delay on large remote recitations.
+        if (autoplay) {
+          el.play().catch(() => setIsPlaying(false));
+        }
+
+        // Once metadata arrives, apply the saved resume position & duration.
         const onLoaded = () => {
-          if (startAt > 0) el.currentTime = startAt;
-          setCurrentTime(startAt);
+          if (startAt > 0) {
+            try {
+              el.currentTime = startAt;
+            } catch {
+              /* ignore */
+            }
+          }
           setDuration(Number.isFinite(el.duration) ? el.duration : bayan.durationSeconds);
           setIsLoading(false);
-          if (autoplay) {
-            el.play().catch(() => setIsPlaying(false));
-          }
         };
         el.addEventListener("loadedmetadata", onLoaded, { once: true });
         return;
