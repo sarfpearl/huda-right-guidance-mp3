@@ -1,7 +1,7 @@
 # 🕌 Huda Bayan — Project Handoff
 
-> **For:** Claude (or any AI assistant continuing this project)
-> **Date:** 2026-08-16
+> **For:** Claude / Antigravity / any AI assistant continuing this project
+> **Date:** 2026-08-19
 > **Project Path:** `/Users/pearl-9744/Claude/Projects/Huda Bayan`
 > **Dev Server:** `npm run dev` → [http://localhost:3000](http://localhost:3000) (config in `.claude/launch.json`)
 
@@ -65,13 +65,19 @@ Huda Bayan/                      ← root folder
 │       ├── site.ts                      ← Brand config (name, url, tagline)
 │       ├── data/
 │       │   ├── seed.ts                  ← Demo data (categories, speakers, bayans)
+│       │   ├── quran.ts                 ← Quran Juz 1–30 + Surah 1–114 data, tracks & audio URLs
 │       │   └── service.ts               ← Data API layer
 │       └── youtube/
 │           ├── index.ts                 ← YouTube URL helpers
 │           └── iframe-api.ts            ← YT IFrame API loader
 │
+├── scripts/
+│   ├── generate-quran-images-free.mjs  ← FREE cover generator (Pollinations, no key) ← USE THIS
+│   └── generate-quran-images.mjs       ← Gemini generator (needs paid billing; kept for later)
+│
 ├── public/
 │   ├── images/scenes/           ← 15 category background JPGs
+│   ├── images/quran/            ← 144 Quran covers: surah-1..114.jpg, juz-1..30.jpg
 │   ├── Glass.svg                ← Glassmorphism card asset
 │   ├── Menu.svg                 ← Hamburger menu icon
 │   ├── YT-Music.svg             ← YouTube Music button logo
@@ -155,6 +161,48 @@ Supports 3 source types:
 | `youtube-video` | YouTube IFrame Player API — plays a single video |
 | `local` | HTML5 `<audio>` — plays a direct MP3 URL |
 
+Quran uses the **`local`** path (no new player was added). Startup is fast:
+playback starts as soon as the browser can play, without waiting for full
+metadata (the resume position is applied on `loadedmetadata`).
+
+---
+
+## 📖 Quran & Surah (`src/lib/data/quran.ts`)
+
+The picker (`TopicPickerModal.tsx`) has three top-level tabs, in order and
+defaulting to **Surah**:
+
+| Tab | Content | Audio source |
+|---|---|---|
+| **Surah** | 114 Surahs (`QURAN_SURAHS` → `SURAH_TRACKS`) | Sudais, `server11.mp3quran.net/sds/NNN.mp3` |
+| **Quran** | 30 Juz/Para (`QURAN_JUZ` → `QURAN_TRACKS`) | Maher Al-Muaiqly, Internet Archive **direct data-node** |
+| **Bayan** | categories (`seed.ts`) | YouTube playlists |
+
+- Each item is a `BayanWithRelations` track played through the existing
+  `playBayan(track, list)`, so next/previous, auto-advance and stop-at-end
+  all come for free, scoped to the same collection.
+- **Juz audio URL** points at the item's *direct* archive node, NOT the
+  `archive.org/download/…` redirect (that redirect times out in-browser).
+  See `RECITER_BASE` in `quran.ts` — one constant to update if the node moves.
+- Track ids: `quran-surah-N` / `quran-juz-N`. Helpers: `isSurahTrackId`,
+  `isQuranTrackId`, `isQuranTrack`, `quranContentLabel`.
+- The player shows **NOW PLAYING · title · category-line** where the
+  category-line is the Quran label (e.g. "Surah 1 • 7 Verses" / "Para 1 •
+  Juz 1 of 30"). Shuffle is context-aware: Surah→random Surah, Juz→random Juz.
+
+### Quran cover images
+- `quranImageUrl(kind, num)` → `/images/quran/{kind}-{num}.jpg`, gated by
+  `QURAN_IMAGES_READY` (**ON by default**; set `NEXT_PUBLIC_QURAN_IMAGES=0`
+  to fall back to the generative `CoverArt` placeholder).
+- 144 rich mosque-scene covers live in `public/images/quran/`, generated
+  **free** by `scripts/generate-quran-images-free.mjs` (Pollinations.ai — no
+  API key, no billing). Re-run any time; it resumes (skips existing files).
+  Regenerate one: delete its `.jpg` and re-run.
+- Gemini (`generate-quran-images.mjs`) is kept for later but **requires paid
+  billing** — the free tier returns `limit: 0` for image generation.
+- `CoverArt.tsx` uses a strong avalanche hash so every generative placeholder
+  (and every Bayan) is visibly distinct per seed/slug.
+
 **LocalStorage keys:**
 - `huda-player:last` — last played track
 - `huda-player:positions` — per-bayan playback positions
@@ -172,6 +220,12 @@ NEXT_PUBLIC_DATA_SOURCE=seed
 
 # Site URL
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
+
+# Quran covers: ON by default. Set to "0" to use generative CoverArt instead.
+NEXT_PUBLIC_QURAN_IMAGES=1
+
+# Gemini image generator (scripts/generate-quran-images.mjs) — needs billing
+GEMINI_API_KEY=
 
 # Supabase (only if DATA_SOURCE=supabase)
 NEXT_PUBLIC_SUPABASE_URL=
@@ -191,7 +245,7 @@ YOUTUBE_API_KEY=
 
 ### 🟡 Needs Implementation
 - [ ] **Supabase backend** — implement stubs in `src/lib/supabase/queries.ts`
-- [ ] **Quran Juz audio** — the Quran tab lists Juz 1–30 (`QURAN_JUZ` in `TopicPickerModal.tsx`), but items only close the modal; wire each Juz to real recitation audio/pages
+- [x] ~~**Quran Juz audio**~~ — DONE: Juz 1–30 and Surah 1–114 are fully playable (see the Quran & Surah section above)
 - [ ] **Real bayan/speaker data** — replace seed placeholders with real Tamil Islamic Bayan content
 - [ ] **Per-category YouTube playlists** — all 16 categories currently share the same demo playlist `PLFRt54vRoHJs`; each needs a real Tamil Bayan playlist ID in `seed.ts`
 - [ ] **Arabic font** — `font-arabic` class references `var(--font-arabic)` which is never set; add Amiri or Noto Naskh Arabic via `next/font/google` in `layout.tsx`
@@ -205,7 +259,9 @@ YOUTUBE_API_KEY=
 - Unified iOS-style glass cards (player / hero / time widget), responsive
 - Bismillah calligraphy floats top-center; topic card shows category + Tamil + tagline
 - Player: circular cover art, dark-glass controls, clickable speed badge, YT playback-rate sync
-- Right slide-over topic picker (Categories / Quran Juz 1–30 / Explore tabs)
+- Topic picker tabs: **Surah (114) / Quran Juz (30) / Bayan** — default Surah
+- Quran & Surah fully playable via the existing player (local audio, Sudais &
+  Maher Al-Muaiqly), with distinct rich AI cover images per item
 - Live clock + geolocation widget (top-left)
 - Mobile responsive + PWA manifest
 - SEO metadata + dynamic OG images per bayan
@@ -234,6 +290,9 @@ npm run typecheck
 ## 📝 Git History
 
 ```
+(pending) feat: free Pollinations Quran/Surah cover images + docs
+7f3d7a6  feat: Surah 1-114 tab, reliable per-Juz audio, context-aware shuffle & player polish
+01cd418  docs: update HANDOFF.md — glass UI, Quran juz tab, playback-rate
 abbd492  feat: glass UI refinements, Quran juz list, and playback-rate fix
 122c7ee  docs: add HANDOFF.md for project continuation
 7e15b6b  fix: resolve UI elements not visible (z-index stacking context)

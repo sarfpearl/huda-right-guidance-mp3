@@ -8,9 +8,10 @@ import type { Category } from "@/types/category";
 import type { Speaker } from "@/types/speaker";
 import type { BayanWithRelations } from "@/types/bayan";
 import { CategoryIcon, CloseIcon, CompassIcon, MenuIcon, PlayIcon, SearchIcon, ShuffleIcon } from "@/components/ui/Icon";
+import { CoverArt } from "@/components/ui/CoverArt";
 import { formatClock, cn } from "@/lib/utils";
 import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
-import { QURAN_JUZ, QURAN_TRACKS, QURAN_SURAHS, SURAH_TRACKS } from "@/lib/data/quran";
+import { QURAN_JUZ, QURAN_TRACKS, QURAN_SURAHS, SURAH_TRACKS, quranImageUrl } from "@/lib/data/quran";
 
 type ModalTab = "categories" | "speakers" | "explore";
 
@@ -326,20 +327,35 @@ export function TopicPickerModal({
                         )}
                       >
                         <div className={cn(
-                          "grid h-11 w-11 shrink-0 place-items-center rounded-full font-bold text-sm border",
-                          isActive
-                            ? "bg-emerald-500 text-slate-950 border-emerald-300"
-                            : "bg-emerald-900/60 text-emerald-300 border-emerald-500/30"
+                          "relative h-11 w-11 shrink-0 overflow-hidden rounded-full border",
+                          isActive ? "border-emerald-300" : "border-emerald-500/30"
                         )}>
-                          {isActive && player.isPlaying ? (
-                            <span className="flex items-end gap-0.5" aria-label="Playing">
-                              <span className="h-3 w-0.5 animate-[equalizer_0.6s_ease-in-out_infinite] bg-slate-950" />
-                              <span className="h-4 w-0.5 animate-[equalizer_0.8s_ease-in-out_infinite] bg-slate-950" />
-                              <span className="h-2.5 w-0.5 animate-[equalizer_0.5s_ease-in-out_infinite] bg-slate-950" />
-                            </span>
+                          {quranImageUrl("juz", j.id) ? (
+                            <Image
+                              src={quranImageUrl("juz", j.id) as string}
+                              alt=""
+                              fill
+                              sizes="44px"
+                              className="object-cover"
+                            />
                           ) : (
-                            j.id
+                            <CoverArt
+                              seed={`quran-juz-${j.id}`}
+                              rounded="rounded-full"
+                              className="absolute inset-0 h-full w-full"
+                            />
                           )}
+                          <span className="absolute inset-0 grid place-items-center font-bold text-sm text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                            {isActive && player.isPlaying ? (
+                              <span className="flex items-end gap-0.5" aria-label="Playing">
+                                <span className="h-3 w-0.5 animate-[equalizer_0.6s_ease-in-out_infinite] bg-emerald-300" />
+                                <span className="h-4 w-0.5 animate-[equalizer_0.8s_ease-in-out_infinite] bg-emerald-300" />
+                                <span className="h-2.5 w-0.5 animate-[equalizer_0.5s_ease-in-out_infinite] bg-emerald-300" />
+                              </span>
+                            ) : (
+                              j.id
+                            )}
+                          </span>
                         </div>
 
                         <div className="min-w-0 flex-1">
@@ -382,20 +398,35 @@ export function TopicPickerModal({
                         )}
                       >
                         <div className={cn(
-                          "grid h-11 w-11 shrink-0 place-items-center rounded-full font-bold text-sm border",
-                          isActive
-                            ? "bg-emerald-500 text-slate-950 border-emerald-300"
-                            : "bg-emerald-900/60 text-emerald-300 border-emerald-500/30"
+                          "relative h-11 w-11 shrink-0 overflow-hidden rounded-full border",
+                          isActive ? "border-emerald-300" : "border-emerald-500/30"
                         )}>
-                          {isActive && player.isPlaying ? (
-                            <span className="flex items-end gap-0.5" aria-label="Playing">
-                              <span className="h-3 w-0.5 animate-[equalizer_0.6s_ease-in-out_infinite] bg-slate-950" />
-                              <span className="h-4 w-0.5 animate-[equalizer_0.8s_ease-in-out_infinite] bg-slate-950" />
-                              <span className="h-2.5 w-0.5 animate-[equalizer_0.5s_ease-in-out_infinite] bg-slate-950" />
-                            </span>
+                          {quranImageUrl("surah", s.number) ? (
+                            <Image
+                              src={quranImageUrl("surah", s.number) as string}
+                              alt=""
+                              fill
+                              sizes="44px"
+                              className="object-cover"
+                            />
                           ) : (
-                            s.number
+                            <CoverArt
+                              seed={`quran-surah-${s.number}`}
+                              rounded="rounded-full"
+                              className="absolute inset-0 h-full w-full"
+                            />
                           )}
+                          <span className="absolute inset-0 grid place-items-center font-bold text-sm text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                            {isActive && player.isPlaying ? (
+                              <span className="flex items-end gap-0.5" aria-label="Playing">
+                                <span className="h-3 w-0.5 animate-[equalizer_0.6s_ease-in-out_infinite] bg-emerald-300" />
+                                <span className="h-4 w-0.5 animate-[equalizer_0.8s_ease-in-out_infinite] bg-emerald-300" />
+                                <span className="h-2.5 w-0.5 animate-[equalizer_0.5s_ease-in-out_infinite] bg-emerald-300" />
+                              </span>
+                            ) : (
+                              s.number
+                            )}
+                          </span>
                         </div>
 
                         <div className="min-w-0 flex-1">

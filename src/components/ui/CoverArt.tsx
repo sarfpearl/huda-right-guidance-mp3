@@ -14,15 +14,29 @@ const PALETTES: Array<[string, string]> = [
   ["#2f8060", "#123a2d"],
   ["#155e4a", "#0b241d"],
   ["#1a5140", "#243b2f"],
+  ["#0f5a5a", "#082c2c"], // teal
+  ["#2b6f5a", "#10362b"],
+  ["#1e5a70", "#0c2733"], // deep blue-green
+  ["#3a6f4a", "#16311f"],
+  ["#4a6d3a", "#1c2a15"], // olive
+  ["#5a5030", "#241f12"], // warm sand-green
+  ["#255f4d", "#0a251d"],
 ];
 
+// Strong avalanche hash (xmur3-style) so even near-identical seeds like
+// "quran-surah-1" vs "quran-surah-2" produce wildly different values — every
+// derived parameter (palette, geometry, rotation) then varies per item, so
+// all 114 Surahs and 30 Juz get visibly distinct generated covers.
 function hash(seed: string): number {
-  let h = 0;
+  let h = 1779033703 ^ seed.length;
   for (let i = 0; i < seed.length; i++) {
-    h = (h << 5) - h + seed.charCodeAt(i);
-    h |= 0;
+    h = Math.imul(h ^ seed.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
   }
-  return Math.abs(h);
+  h = Math.imul(h ^ (h >>> 16), 2246822507);
+  h = Math.imul(h ^ (h >>> 13), 3266489909);
+  h ^= h >>> 16;
+  return h >>> 0;
 }
 
 export function CoverArt({
@@ -38,8 +52,14 @@ export function CoverArt({
 }) {
   const h = hash(seed);
   const [c1, c2] = PALETTES[h % PALETTES.length];
-  const rotate = h % 45;
+  const rotate = h % 90;
   const gid = `g-${h % 100000}`;
+  // Seed-derived geometry so each item looks distinct: star size, the two
+  // guide-circle radii, and the gradient angle all vary with the seed.
+  const half = 34 + ((h >>> 2) % 16); // 34–49 → square side 68–98
+  const rOuter = 52 + ((h >>> 4) % 24); // 52–75
+  const rInner = 22 + ((h >>> 6) % 16); // 22–37
+  const angle = (h >>> 8) % 2 === 0;
 
   return (
     <div
@@ -56,7 +76,13 @@ export function CoverArt({
         preserveAspectRatio="xMidYMid slice"
       >
         <defs>
-          <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
+          <linearGradient
+            id={gid}
+            x1="0"
+            y1="0"
+            x2={angle ? "1" : "0.3"}
+            y2="1"
+          >
             <stop offset="0%" stopColor={c1} />
             <stop offset="100%" stopColor={c2} />
           </linearGradient>
@@ -69,17 +95,17 @@ export function CoverArt({
           fill="none"
           strokeWidth="1"
         >
-          {/* Eight-point star (two overlaid squares) */}
-          <rect x="55" y="55" width="90" height="90" />
+          {/* Eight-point star (two overlaid squares), seed-scaled */}
+          <rect x={100 - half} y={100 - half} width={half * 2} height={half * 2} />
           <rect
-            x="55"
-            y="55"
-            width="90"
-            height="90"
+            x={100 - half}
+            y={100 - half}
+            width={half * 2}
+            height={half * 2}
             transform="rotate(45 100 100)"
           />
-          <circle cx="100" cy="100" r="64" strokeOpacity="0.12" />
-          <circle cx="100" cy="100" r="30" strokeOpacity="0.18" />
+          <circle cx="100" cy="100" r={rOuter} strokeOpacity="0.12" />
+          <circle cx="100" cy="100" r={rInner} strokeOpacity="0.18" />
         </g>
         <g stroke="#c69749" strokeOpacity="0.10" strokeWidth="1" fill="none">
           <path d="M0 40 H200 M0 100 H200 M0 160 H200 M40 0 V200 M100 0 V200 M160 0 V200" />
